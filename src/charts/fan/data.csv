@@ -1,0 +1,18 @@
+Route,distance (km),price change (%)
+London-Frankfurt,655,-6
+Amsterdam-London,372,-25
+Singapore-Sydney,6302,8
+Boston-Dallas,2513,-3.5
+Orlando-Seattle,3500,-2
+New York-Los Angeles,4000,-3.5
+Hong Kong-Beijing,1950,-7.5
+Dubai-Singapore,5800,-27
+Hong Kong-Singapore,2600,-7.5
+New York-London,5500,-38
+Orlando-London,7000,-42
+Beijing-Paris,8200,-22
+Los Angeles- London,8800,-43
+San Francisco- Beijing,9500,-39
+Los Angeles- Paris,9150,-48.5
+Los Angeles- Seoul,9600,-20
+New York-Paris,5900,-41

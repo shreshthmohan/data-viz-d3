@@ -1,0 +1,11 @@
+{
+  "name": "data-viz-d3",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:shreshthmohan/data-viz-d3.git",
+  "author": "Shreshth Mohan <sremog@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "eslint": "^8.6.0"
+  }
+}
