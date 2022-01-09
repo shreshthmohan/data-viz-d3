@@ -25,7 +25,7 @@ const angleField = 'price change (%)'
 const nameField = 'Route'
 
 // Options:
-const coreChartWidth = 600
+const coreChartWidth = 800
 const aspectRatio = 2
 const marginBottom = 0
 const marginLeft = 0
@@ -37,6 +37,30 @@ const chartContainerSelector = '#chart-container'
 
 d3.csv('data.csv').then(rawData => {
   // console.log(rawData)
+
+  const callout = d3
+    .select('body')
+    .append('div')
+    .attr('class', 'dom-callout')
+    .attr(
+      'style',
+      'opacity: 0; position: absolute; text-align: center; background-color: white; border-radius: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; line-height: 1rem; border-width: 1px;',
+    )
+
+  d3.select('body').append('style').html(`
+    
+    .mallet {
+      stroke: '#266fa0';
+    }
+    .mallet.hovered {
+      stroke: orange;
+      
+    }
+    .mallet.hovered text {
+      fill: #000;
+    }
+    `)
+
   const coreChartHeight = coreChartWidth / aspectRatio
 
   const viewBoxHeight = coreChartHeight + marginTop + marginBottom
@@ -84,8 +108,8 @@ d3.csv('data.csv').then(rawData => {
   ]
   angleScale.range(angleRange)
 
-  console.log('angleDomain:', angleDomain)
-  console.log('angleScale.domain:', angleScale.domain())
+  // console.log('angleDomain:', angleDomain)
+  // console.log('angleScale.domain:', angleScale.domain())
 
   const lines = chartCore
     .append('g')
@@ -94,24 +118,110 @@ d3.csv('data.csv').then(rawData => {
       `translate(${coreChartWidth / 2 - radiusScale.range()[1] / 2}, 0)`,
     )
 
-  lines
-    .selectAll('path')
+  // Data Lines
+  const dataLines = lines
+    .selectAll('g')
     .data(data)
-    .join('path')
+    .join('g')
+    .attr('class', 'mallet')
+    .attr('fill', 'white')
+    .attr('stroke', '#266fa0')
+    .sort((a, b) => d3.descending(a[radiusField], b[radiusField]))
+    .on('mouseover', function (e, d) {
+      // console.log(d[nameField])
+      d3.select(this).classed('hovered', true)
+      d3.select(this).select('rect').attr('opacity', 0.8)
+    })
+    .on('mouseout', function (e, d) {
+      d3.select(this).classed('hovered', false)
+      d3.select(this).select('rect').attr('opacity', 0)
+    })
+
+  const transitionDuration = 1200
+
+  dataLines
+    .append('path')
+    .transition()
+    .duration(transitionDuration)
     .attr('d', d => {
       return d3.lineRadial()([
         [0, 0],
         [angleScale(d[angleField]), radiusScale(d[radiusField])],
       ])
     })
-    .attr('stroke', '#777')
-    .attr('stroke-width', 1.5)
-    .attr('opacity', 0.7)
+    .attr('stroke-width', 2)
+    // .attr('opacity', 0.7)
     .attr('fill', 'none')
-    .on('mouseover', (e, d) => {
-      console.log(d[nameField])
-    })
 
+  dataLines
+    .append('circle')
+    .transition()
+    .duration(transitionDuration)
+    .attr('cx', d => {
+      return (
+        radiusScale(d[radiusField]) *
+        Math.cos(angleScale(d[angleField]) - Math.PI / 2)
+      )
+    })
+    .attr('cy', d => {
+      return (
+        radiusScale(d[radiusField]) *
+        Math.sin(angleScale(d[angleField]) - Math.PI / 2)
+      )
+    })
+    .attr('r', 4)
+    .attr('stroke-width', 2)
+
+  dataLines
+    .append('rect')
+    .attr('x', d => {
+      return (
+        5 +
+        radiusScale(d[radiusField]) *
+          Math.cos(angleScale(d[angleField]) - Math.PI / 2)
+      )
+    })
+    .attr('y', d => {
+      return (
+        radiusScale(d[radiusField]) *
+          Math.sin(angleScale(d[angleField]) - Math.PI / 2) -
+        6
+      )
+    })
+    .attr('width', 70)
+    .attr('height', 12)
+    .attr('opacity', 0)
+    .attr('stroke-width', 0)
+
+  dataLines
+    .append('text')
+    .attr('opacity', 0)
+    .transition()
+    .duration(transitionDuration)
+    .attr('dx', d => {
+      return (
+        7 +
+        radiusScale(d[radiusField]) *
+          Math.cos(angleScale(d[angleField]) - Math.PI / 2)
+      )
+    })
+    .attr('dy', d => {
+      return (
+        radiusScale(d[radiusField]) *
+        Math.sin(angleScale(d[angleField]) - Math.PI / 2)
+      )
+    })
+    .attr('opacity', 1)
+    .attr('fill', '#777')
+    .attr('stroke', 'none')
+    .text(d => d[nameField])
+    .attr('font-size', '9')
+    .attr('font-family', 'sans-serif')
+    // .attr('font-weight', 'bold')
+    .attr('alignment-baseline', 'middle')
+    .call(d => console.log('each', d))
+
+  // y-axis
   lines
     .append('g')
     .call(d3.axisLeft(radiusScale).ticks(5).tickSize(0))
@@ -126,9 +236,10 @@ d3.csv('data.csv').then(rawData => {
 
   const xGridLinesData = angleScale.ticks()
   const [firstXGridLine, lastXGridLine] = d3.extent(xGridLinesData)
-  console.log(firstXGridLine, lastXGridLine)
-  console.log(xGridLinesData)
+  // console.log(firstXGridLine, lastXGridLine)
+  // console.log(xGridLinesData)
 
+  // y-axis grid lines
   lines
     .append('g')
     .attr('class', 'y-axis-grid')
@@ -148,6 +259,7 @@ d3.csv('data.csv').then(rawData => {
     .attr('stroke', 'white')
     .attr('stroke-width', 2)
 
+  // x-axis grid lines
   lines
     .append('g')
     .lower()
@@ -164,6 +276,7 @@ d3.csv('data.csv').then(rawData => {
     .attr('stroke-width', 1.5)
     .attr('fill', 'none')
 
+  // x-axis tick labels
   lines
     .append('g')
     .attr('font-size', '10')
@@ -185,6 +298,7 @@ d3.csv('data.csv').then(rawData => {
     .attr('alignment-baseline', 'middle')
     .attr('text-anchor', 'middle')
 
+  // grid background - fan
   lines
     .append('path')
     .attr(
@@ -199,7 +313,7 @@ d3.csv('data.csv').then(rawData => {
     .attr('fill', '#ebece7')
     .lower()
 
-  console.log('anglescale ticks', angleScale.ticks())
+  // console.log('anglescale ticks', angleScale.ticks())
 
   preventOverflow({
     allComponents,
