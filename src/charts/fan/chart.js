@@ -70,10 +70,19 @@ d3.csv('data.csv').then(rawData => {
     .domain([0, d3.max(data, d => d[radiusField])])
     .nice()
 
-  const angleScale = d3
+  const angleScaleOld = d3
     .scaleLinear()
     .domain([0, -50])
     .range([Math.PI / 2, Math.PI])
+
+  const angleDomain = d3.extent(data.map(d => d[angleField])).reverse()
+  const angleScale = d3.scaleLinear().domain(angleDomain).nice()
+
+  const angleRange = [
+    angleScaleOld(angleScale.domain()[0]),
+    angleScaleOld(angleScale.domain()[1]),
+  ]
+  angleScale.range(angleRange)
 
   const lines = chartCore
     .append('g')
@@ -108,8 +117,14 @@ d3.csv('data.csv').then(rawData => {
   const yGridLinesData = radiusScale.ticks()
   // console.log(yGridLinesData)
 
+  const xGridLinesData = angleScale.ticks(5)
+  const [firstXGridLine, lastXGridLine] = d3.extent(xGridLinesData)
+  console.log(firstXGridLine, lastXGridLine)
+  console.log(xGridLinesData)
+
   lines
     .append('g')
+    .attr('class', 'y-axis-grid')
     .lower()
     .selectAll('path')
     .data(yGridLinesData)
@@ -118,16 +133,13 @@ d3.csv('data.csv').then(rawData => {
       d3.arc()({
         innerRadius: 0,
         outerRadius: radiusScale(d),
-        startAngle: Math.PI / 2,
-        endAngle: Math.PI,
+        startAngle: angleScale(firstXGridLine),
+        endAngle: angleScale(lastXGridLine),
       }),
     )
     .attr('fill', 'none')
     .attr('stroke', 'white')
     .attr('stroke-width', 2)
-
-  const xGridLinesData = angleScale.ticks(5)
-  console.log(xGridLinesData)
 
   lines
     .append('g')
@@ -143,8 +155,28 @@ d3.csv('data.csv').then(rawData => {
     })
     .attr('stroke', 'white')
     .attr('stroke-width', 1.5)
-    // .attr('opacity', 0.7)
     .attr('fill', 'none')
+
+  lines
+    .append('g')
+    .attr('font-size', '10')
+    .attr('font-family', 'sans-serif')
+    .selectAll('text')
+    .data(xGridLinesData)
+    .join('text')
+    .attr('dx', d => {
+      return (
+        (radiusScale.range()[1] + 10) * Math.cos(angleScale(d) - Math.PI / 2)
+      )
+    })
+    .attr('dy', d => {
+      return (
+        (radiusScale.range()[1] + 10) * Math.sin(angleScale(d) - Math.PI / 2)
+      )
+    })
+    .text(d => d)
+    .attr('alignment-baseline', 'middle')
+    .attr('text-anchor', 'middle')
 
   lines
     .append('path')
@@ -153,12 +185,14 @@ d3.csv('data.csv').then(rawData => {
       d3.arc()({
         innerRadius: 0,
         outerRadius: radiusScale.range()[1],
-        startAngle: Math.PI / 2,
-        endAngle: Math.PI,
+        startAngle: angleScale(firstXGridLine),
+        endAngle: angleScale(lastXGridLine),
       }),
     )
     .attr('fill', '#ebece7')
     .lower()
+
+  console.log('anglescale ticks', angleScale.ticks())
 
   preventOverflow({
     allComponents,
