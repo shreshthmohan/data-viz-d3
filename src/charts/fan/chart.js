@@ -25,7 +25,7 @@ const angleField = 'price change (%)'
 const nameField = 'Route'
 
 // Options:
-const coreChartWidth = 1000
+const coreChartWidth = 600
 const aspectRatio = 2
 const marginBottom = 0
 const marginLeft = 0
@@ -84,6 +84,9 @@ d3.csv('data.csv').then(rawData => {
   ]
   angleScale.range(angleRange)
 
+  console.log('angleDomain:', angleDomain)
+  console.log('angleScale.domain:', angleScale.domain())
+
   const lines = chartCore
     .append('g')
     .attr(
@@ -113,11 +116,15 @@ d3.csv('data.csv').then(rawData => {
     .append('g')
     .call(d3.axisLeft(radiusScale).ticks(5).tickSize(0))
     .call(g => g.select('.domain').remove())
+    .attr(
+      'transform',
+      `rotate(${-180 + (angleScale.range()[1] * 180) / Math.PI})`,
+    )
 
   const yGridLinesData = radiusScale.ticks()
   // console.log(yGridLinesData)
 
-  const xGridLinesData = angleScale.ticks(5)
+  const xGridLinesData = angleScale.ticks()
   const [firstXGridLine, lastXGridLine] = d3.extent(xGridLinesData)
   console.log(firstXGridLine, lastXGridLine)
   console.log(xGridLinesData)
@@ -185,8 +192,8 @@ d3.csv('data.csv').then(rawData => {
       d3.arc()({
         innerRadius: 0,
         outerRadius: radiusScale.range()[1],
-        startAngle: angleScale(firstXGridLine),
-        endAngle: angleScale(lastXGridLine),
+        startAngle: angleScale.range()[0],
+        endAngle: angleScale.range()[1],
       }),
     )
     .attr('fill', '#ebece7')
