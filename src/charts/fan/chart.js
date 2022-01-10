@@ -36,6 +36,9 @@ const bgColor = 'transparent'
 const angleValueFormat = ''
 const radiusValueFormat = ','
 
+const radiusAxisLabel = `${radiusField}, km`
+const angleAxisLabel = 'Change in the price of economy-class ticket'
+
 const chartContainerSelector = '#chart-container'
 
 const angleValueFormatter = val => `${d3.format(angleValueFormat)(val)}%`
@@ -251,26 +254,62 @@ d3.csv('data.csv').then(rawData => {
   // y-axis
   lines
     .append('g')
-    .call(
-      d3
-        .axisLeft(radiusScale)
-        .ticks(5)
-        .tickSize(0)
-        .tickFormat(radiusValueFormatter),
-    )
-    .call(g => g.select('.domain').remove())
     .attr(
       'transform',
       `rotate(${-180 + (angleScale.range()[1] * 180) / Math.PI})`,
+    )
+    .call(d3.axisLeft(radiusScale).ticks(5).tickSize(0))
+    .call(g => g.select('.domain').remove())
+    .call(g =>
+      g
+        .append('text')
+        .text(radiusAxisLabel)
+        .attr('fill', '#333')
+        .style('font-weight', 'bold')
+        .attr('text-anchor', 'middle')
+        .style('font-size', 12)
+        .attr('dy', -35)
+        .attr(
+          'transform',
+          `translate(0, ${radiusScale.range()[1] / 2}) rotate(-90)`,
+        ),
+    )
+
+  const raidusTicksForTopAxis = radiusScale.ticks(5)
+  const raidusTicksForTopAxisCount = raidusTicksForTopAxis.length
+
+  lines
+    .append('g')
+    .attr(
+      'transform',
+      `rotate(${-90 + (angleScale.range()[0] * 180) / Math.PI})`,
+    )
+    .call(
+      d3
+        .axisTop(radiusScale)
+        .ticks(5)
+        .tickValues(
+          raidusTicksForTopAxis.slice(1, raidusTicksForTopAxisCount - 1),
+        )
+        .tickSize(0),
+    )
+    .call(g => g.select('.domain').remove())
+    .call(g =>
+      g
+        .append('text')
+        .text(radiusAxisLabel)
+        .attr('fill', '#333')
+        .style('font-weight', 'bold')
+        .attr('text-anchor', 'middle')
+        .style('font-size', 12)
+        .attr('dy', -20)
+        .attr('transform', `translate(${radiusScale.range()[1] / 2}, 0) `),
     )
 
   const yGridLinesData = radiusScale.ticks()
   // console.log(yGridLinesData)
 
   const xGridLinesData = angleScale.ticks(5)
-  const [firstXGridLine, lastXGridLine] = d3.extent(xGridLinesData)
-  // console.log(firstXGridLine, lastXGridLine)
-  // console.log(xGridLinesData)
 
   // y-axis grid lines
   lines
@@ -284,8 +323,8 @@ d3.csv('data.csv').then(rawData => {
       d3.arc()({
         innerRadius: 0,
         outerRadius: radiusScale(d),
-        startAngle: angleScale(firstXGridLine),
-        endAngle: angleScale(lastXGridLine),
+        startAngle: angleScale.range()[0],
+        endAngle: angleScale.range()[1],
       }),
     )
     .attr('fill', 'none')
@@ -347,6 +386,30 @@ d3.csv('data.csv').then(rawData => {
     .lower()
 
   // console.log('anglescale ticks', angleScale.ticks())
+  lines
+    .append('path')
+    .attr('id', 'for-curved-x-label')
+    .attr(
+      'd',
+      d3.arc()({
+        innerRadius: 40 + radiusScale.range()[1],
+        outerRadius: 40 + radiusScale.range()[1],
+        startAngle: angleScale.range()[0],
+        endAngle: angleScale.range()[1],
+      }),
+    )
+    .attr('fill', '#ebece7')
+
+  lines
+    .append('text')
+    .append('textPath')
+    .attr('xlink:href', '#for-curved-x-label')
+    .style('text-anchor', 'middle')
+    .attr('startOffset', '75%')
+    .text(angleAxisLabel)
+    .attr('font-size', '12')
+    .attr('font-family', 'sans-serif')
+    .style('font-weight', 'bold')
 
   preventOverflow({
     allComponents,
