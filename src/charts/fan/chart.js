@@ -1,4 +1,4 @@
-/* global d3 */
+/* global window, d3 */
 
 function preventOverflow({ allComponents, svg, safetyMargin = 5, margins }) {
   const { marginLeft, marginRight, marginTop, marginBottom } = margins
@@ -20,12 +20,12 @@ function preventOverflow({ allComponents, svg, safetyMargin = 5, margins }) {
   )
 }
 
-const radiusField = 'distance (km)'
-const angleField = 'price change (%)'
+const radiusField = 'Distance'
+const angleField = 'Price change'
 const nameField = 'Route'
 
 // Options:
-const coreChartWidth = 800
+const coreChartWidth = 1000
 const aspectRatio = 2
 const marginBottom = 0
 const marginLeft = 0
@@ -33,7 +33,13 @@ const marginRight = 0
 const marginTop = 0
 const bgColor = 'transparent'
 
+const angleValueFormat = ''
+const radiusValueFormat = ','
+
 const chartContainerSelector = '#chart-container'
+
+const angleValueFormatter = val => `${d3.format(angleValueFormat)(val)}%`
+const radiusValueFormatter = val => `${d3.format(radiusValueFormat)(val)} km`
 
 d3.csv('data.csv').then(rawData => {
   // console.log(rawData)
@@ -44,7 +50,7 @@ d3.csv('data.csv').then(rawData => {
     .attr('class', 'dom-callout')
     .attr(
       'style',
-      'opacity: 0; position: absolute; text-align: center; background-color: white; border-radius: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; line-height: 1rem; border-width: 1px;',
+      'opacity: 0; position: absolute; background-color: #ffffffc0; border-radius: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; line-height: 1rem; border-width: 1px;',
     )
 
   d3.select('body').append('style').html(`
@@ -131,10 +137,29 @@ d3.csv('data.csv').then(rawData => {
       // console.log(d[nameField])
       d3.select(this).classed('hovered', true)
       d3.select(this).select('rect').attr('opacity', 0.8)
+
+      callout.html(`
+        <div style="font-weight: 600;">${d[nameField]}</div>
+        <div>${radiusField}: ${radiusValueFormatter(d[radiusField])}</div>
+        <div>${angleField}: ${angleValueFormatter(d[angleField])}</div>
+      `)
+
+      callout
+        .style('left', `${e.clientX}px`)
+        .style('top', `${e.clientY + 20 + window.scrollY}px`)
+        .transition()
+        .duration(200)
+        .style('opacity', 1)
     })
-    .on('mouseout', function (e, d) {
+    .on('mouseout', function () {
       d3.select(this).classed('hovered', false)
       d3.select(this).select('rect').attr('opacity', 0)
+
+      callout
+        .style('left', '-300px')
+        .transition()
+        .duration(200)
+        .style('opacity', 0)
     })
 
   const transitionDuration = 1200
@@ -172,59 +197,67 @@ d3.csv('data.csv').then(rawData => {
     .attr('r', 4)
     .attr('stroke-width', 2)
 
-  dataLines
-    .append('rect')
-    .attr('x', d => {
-      return (
-        5 +
-        radiusScale(d[radiusField]) *
-          Math.cos(angleScale(d[angleField]) - Math.PI / 2)
-      )
-    })
-    .attr('y', d => {
-      return (
-        radiusScale(d[radiusField]) *
-          Math.sin(angleScale(d[angleField]) - Math.PI / 2) -
-        6
-      )
-    })
-    .attr('width', 70)
-    .attr('height', 12)
-    .attr('opacity', 0)
-    .attr('stroke-width', 0)
+  const enableTextLabels = false
+  if (enableTextLabels) {
+    dataLines
+      .append('rect')
+      .attr('x', d => {
+        return (
+          5 +
+          radiusScale(d[radiusField]) *
+            Math.cos(angleScale(d[angleField]) - Math.PI / 2)
+        )
+      })
+      .attr('y', d => {
+        return (
+          radiusScale(d[radiusField]) *
+            Math.sin(angleScale(d[angleField]) - Math.PI / 2) -
+          6
+        )
+      })
+      .attr('width', 70)
+      .attr('height', 12)
+      .attr('opacity', 0)
+      .attr('stroke-width', 0)
 
-  dataLines
-    .append('text')
-    .attr('opacity', 0)
-    .transition()
-    .duration(transitionDuration)
-    .attr('dx', d => {
-      return (
-        7 +
-        radiusScale(d[radiusField]) *
-          Math.cos(angleScale(d[angleField]) - Math.PI / 2)
-      )
-    })
-    .attr('dy', d => {
-      return (
-        radiusScale(d[radiusField]) *
-        Math.sin(angleScale(d[angleField]) - Math.PI / 2)
-      )
-    })
-    .attr('opacity', 1)
-    .attr('fill', '#777')
-    .attr('stroke', 'none')
-    .text(d => d[nameField])
-    .attr('font-size', '9')
-    .attr('font-family', 'sans-serif')
-    // .attr('font-weight', 'bold')
-    .attr('alignment-baseline', 'middle')
-    .call(d => console.log('each', d))
+    dataLines
+      .append('text')
+      .attr('opacity', 0)
+      .transition()
+      .duration(transitionDuration)
+      .attr('dx', d => {
+        return (
+          7 +
+          radiusScale(d[radiusField]) *
+            Math.cos(angleScale(d[angleField]) - Math.PI / 2)
+        )
+      })
+      .attr('dy', d => {
+        return (
+          radiusScale(d[radiusField]) *
+          Math.sin(angleScale(d[angleField]) - Math.PI / 2)
+        )
+      })
+      .attr('opacity', 1)
+      .attr('fill', '#777')
+      .attr('stroke', 'none')
+      .text(d => d[nameField])
+      .attr('font-size', '9')
+      .attr('font-family', 'sans-serif')
+      // .attr('font-weight', 'bold')
+      .attr('alignment-baseline', 'middle')
+  }
 
   // y-axis
   lines
     .append('g')
-    .call(d3.axisLeft(radiusScale).ticks(5).tickSize(0))
+    .call(
+      d3
+        .axisLeft(radiusScale)
+        .ticks(5)
+        .tickSize(0)
+        .tickFormat(radiusValueFormatter),
+    )
     .call(g => g.select('.domain').remove())
     .attr(
       'transform',
@@ -234,7 +267,7 @@ d3.csv('data.csv').then(rawData => {
   const yGridLinesData = radiusScale.ticks()
   // console.log(yGridLinesData)
 
-  const xGridLinesData = angleScale.ticks()
+  const xGridLinesData = angleScale.ticks(5)
   const [firstXGridLine, lastXGridLine] = d3.extent(xGridLinesData)
   // console.log(firstXGridLine, lastXGridLine)
   // console.log(xGridLinesData)
@@ -294,7 +327,7 @@ d3.csv('data.csv').then(rawData => {
         (radiusScale.range()[1] + 10) * Math.sin(angleScale(d) - Math.PI / 2)
       )
     })
-    .text(d => d)
+    .text(d => angleValueFormatter(d))
     .attr('alignment-baseline', 'middle')
     .attr('text-anchor', 'middle')
 
