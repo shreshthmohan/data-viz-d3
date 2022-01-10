@@ -1,24 +1,21 @@
-/* global window, d3 */
+/* global window */
 
-function preventOverflow({ allComponents, svg, safetyMargin = 5, margins }) {
-  const { marginLeft, marginRight, marginTop, marginBottom } = margins
-  let allComponentsBox = allComponents.node().getBBox()
+import {
+  format,
+  select,
+  min,
+  max,
+  descending,
+  csv,
+  extent,
+  scaleLinear,
+  lineRadial,
+  axisLeft,
+  axisTop,
+  arc,
+} from 'd3'
 
-  const updatedViewBoxWidth =
-    allComponentsBox.width + safetyMargin + marginLeft + marginRight
-  const updatedViewBoxHeight =
-    allComponentsBox.height + safetyMargin + marginTop + marginBottom
-  svg.attr('viewBox', `0 0 ${updatedViewBoxWidth} ${updatedViewBoxHeight}`)
-
-  allComponentsBox = allComponents.node().getBBox()
-
-  allComponents.attr(
-    'transform',
-    `translate(${-allComponentsBox.x + safetyMargin / 2 + marginLeft}, ${
-      -allComponentsBox.y + safetyMargin / 2 + marginTop
-    })`,
-  )
-}
+import { preventOverflow } from '../utils/preventOverflow'
 
 const radiusField = 'Distance'
 const angleField = 'Price change'
@@ -41,14 +38,13 @@ const angleAxisLabel = 'Change in the price of economy-class ticket'
 
 const chartContainerSelector = '#chart-container'
 
-const angleValueFormatter = val => `${d3.format(angleValueFormat)(val)}%`
-const radiusValueFormatter = val => `${d3.format(radiusValueFormat)(val)} km`
+const angleValueFormatter = val => `${format(angleValueFormat)(val)}%`
+const radiusValueFormatter = val => `${format(radiusValueFormat)(val)} km`
 
-d3.csv('data.csv').then(rawData => {
+csv('data.csv').then(rawData => {
   // console.log(rawData)
 
-  const callout = d3
-    .select('body')
+  const callout = select('body')
     .append('div')
     .attr('class', 'dom-callout')
     .attr(
@@ -56,7 +52,7 @@ d3.csv('data.csv').then(rawData => {
       'opacity: 0; position: absolute; background-color: #ffffffc0; border-radius: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; line-height: 1rem; border-width: 1px;',
     )
 
-  d3.select('body').append('style').html(`
+  select('body').append('style').html(`
     
     .mallet {
       stroke: '#266fa0';
@@ -75,7 +71,7 @@ d3.csv('data.csv').then(rawData => {
   const viewBoxHeight = coreChartHeight + marginTop + marginBottom
   const viewBoxWidth = coreChartWidth + marginLeft + marginRight
 
-  const chartParent = d3.select(chartContainerSelector)
+  const chartParent = select(chartContainerSelector)
 
   const svg = chartParent
     .append('svg')
@@ -97,19 +93,17 @@ d3.csv('data.csv').then(rawData => {
     return dataEl
   })
 
-  const radiusScale = d3
-    .scaleLinear()
-    .range([0, d3.min([coreChartHeight, coreChartWidth])])
-    .domain([0, d3.max(data, d => d[radiusField])])
+  const radiusScale = scaleLinear()
+    .range([0, min([coreChartHeight, coreChartWidth])])
+    .domain([0, max(data, d => d[radiusField])])
     .nice()
 
-  const angleScaleOld = d3
-    .scaleLinear()
+  const angleScaleOld = scaleLinear()
     .domain([0, -50])
     .range([Math.PI / 2, Math.PI])
 
-  const angleDomain = d3.extent(data.map(d => d[angleField])).reverse()
-  const angleScale = d3.scaleLinear().domain(angleDomain).nice()
+  const angleDomain = extent(data.map(d => d[angleField])).reverse()
+  const angleScale = scaleLinear().domain(angleDomain).nice()
 
   const angleRange = [
     angleScaleOld(angleScale.domain()[0]),
@@ -135,11 +129,11 @@ d3.csv('data.csv').then(rawData => {
     .attr('class', 'mallet')
     .attr('fill', 'white')
     .attr('stroke', '#266fa0')
-    .sort((a, b) => d3.descending(a[radiusField], b[radiusField]))
+    .sort((a, b) => descending(a[radiusField], b[radiusField]))
     .on('mouseover', function (e, d) {
       // console.log(d[nameField])
-      d3.select(this).classed('hovered', true)
-      d3.select(this).select('rect').attr('opacity', 0.8)
+      select(this).classed('hovered', true)
+      select(this).select('rect').attr('opacity', 0.8)
 
       callout.html(`
         <div style="font-weight: 600;">${d[nameField]}</div>
@@ -155,8 +149,8 @@ d3.csv('data.csv').then(rawData => {
         .style('opacity', 1)
     })
     .on('mouseout', function () {
-      d3.select(this).classed('hovered', false)
-      d3.select(this).select('rect').attr('opacity', 0)
+      select(this).classed('hovered', false)
+      select(this).select('rect').attr('opacity', 0)
 
       callout
         .style('left', '-300px')
@@ -172,7 +166,7 @@ d3.csv('data.csv').then(rawData => {
     .transition()
     .duration(transitionDuration)
     .attr('d', d => {
-      return d3.lineRadial()([
+      return lineRadial()([
         [0, 0],
         [angleScale(d[angleField]), radiusScale(d[radiusField])],
       ])
@@ -258,7 +252,7 @@ d3.csv('data.csv').then(rawData => {
       'transform',
       `rotate(${-180 + (angleScale.range()[1] * 180) / Math.PI})`,
     )
-    .call(d3.axisLeft(radiusScale).ticks(5).tickSize(0))
+    .call(axisLeft(radiusScale).ticks(5).tickSize(0))
     .call(g => g.select('.domain').remove())
     .call(g =>
       g
@@ -285,8 +279,7 @@ d3.csv('data.csv').then(rawData => {
       `rotate(${-90 + (angleScale.range()[0] * 180) / Math.PI})`,
     )
     .call(
-      d3
-        .axisTop(radiusScale)
+      axisTop(radiusScale)
         .ticks(5)
         .tickValues(
           raidusTicksForTopAxis.slice(1, raidusTicksForTopAxisCount - 1),
@@ -320,7 +313,7 @@ d3.csv('data.csv').then(rawData => {
     .data(yGridLinesData)
     .join('path')
     .attr('d', d =>
-      d3.arc()({
+      arc()({
         innerRadius: 0,
         outerRadius: radiusScale(d),
         startAngle: angleScale.range()[0],
@@ -339,7 +332,7 @@ d3.csv('data.csv').then(rawData => {
     .data(xGridLinesData)
     .join('path')
     .attr('d', d => {
-      return d3.lineRadial()([
+      return lineRadial()([
         [0, 0],
         [angleScale(d), radiusScale.range()[1]],
       ])
@@ -375,7 +368,7 @@ d3.csv('data.csv').then(rawData => {
     .append('path')
     .attr(
       'd',
-      d3.arc()({
+      arc()({
         innerRadius: 0,
         outerRadius: radiusScale.range()[1],
         startAngle: angleScale.range()[0],
@@ -391,7 +384,7 @@ d3.csv('data.csv').then(rawData => {
     .attr('id', 'for-curved-x-label')
     .attr(
       'd',
-      d3.arc()({
+      arc()({
         innerRadius: 40 + radiusScale.range()[1],
         outerRadius: 40 + radiusScale.range()[1],
         startAngle: angleScale.range()[0],
