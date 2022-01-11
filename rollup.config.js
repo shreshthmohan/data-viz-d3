@@ -2,17 +2,17 @@ import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
 
 export default [
-  // {
-  //   input: './src/fan/chart.js',
-  //   output: [
-  //     {
-  //       file: './dist/fan/chart.js',
-  //       format: 'umd',
-  //       name: 'fan', // use this global var when using in the browser
-  //     },
-  //   ],
-  //   plugins: [resolve(), terser()],
-  // },
+  {
+    input: './src/fan/chart.js',
+    output: [
+      {
+        file: './dist/fan/chart.js',
+        format: 'umd',
+        name: 'fan', // use this global var when using in the browser
+      },
+    ],
+    plugins: [resolve(), terser()],
+  },
   {
     input: './src/taxes/chart.js',
     output: [
@@ -22,9 +22,6 @@ export default [
         name: 'taxes', // use this global var when using in the browser
       },
     ],
-    plugins: [
-      resolve(),
-      //  terser()
-    ],
+    plugins: [resolve(), terser()],
   },
 ]
