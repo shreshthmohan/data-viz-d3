@@ -1,0 +1,427 @@
+capitalization,earnings,taxes,sector,name,alias,symbol,taxRate
+73048,33992,9379,Vehicle Resolution,3M Company,,MMM,27.59178630265945
+57408,34694,6317,Set Up My Loan,Abbott Laboratories,,ABT,18.207759266732
+3867,2551,960,Outside Sales,Abercrombie & Fitch Co.,,ANF,37.632301058408466
+49763,18735,5025,Keep Me In My Car,Accenture plc,,ACN,26.821457165732586
+30619,16453,2834,Navigate My Account,ACE Limited,,ACE,17.224822220871573
+21980,5824,1035,Keep Me In My Car,Adobe Systems Inc.,,ADBE,17.771291208791208
+17797,15139,4637,Set Up My Loan,Aetna Inc.,,AET,30.62949996697272
+23183,17461,4441,Navigate My Account,AFLAC Inc.,,AFL,25.4338239505183
+14463,4259,565,Set Up My Loan,Agilent Technologies Inc.,,A,13.266024888471472
+5019,2272,228,Fund My Deal,AGL Resources Inc.,,GAS,10.035211267605634
+17783,7775,1217,Inside Sales,Air Products & Chemicals Inc.,,APD,15.652733118971062
+7355,2270,374,Inside Sales,"Airgas, Inc.",,ARG,16.475770925110133
+6155,1531,203,Keep Me In My Car,"Akamai Technologies, Inc.",,AKAM,13.25930764206401
+19166,767,41,Keep Payments Simple,"Alexion Keep Payments Simpleceuticals, Inc.",,ALXN,5.345501955671447
+3214,2796,489,Inside Sales,Allegheny Technologies Inc.,,ATI,17.489270386266096
+33550,5279,2049,Keep Payments Simple,Allergan Inc.,,AGN,38.81416935025573
+10627,3371,132,Keep Me In My Car,Altera Corp.,,ALTR,3.915752002373183
+70631,32126,13771,Help Me Catch Up,Altria Group Inc.,,MO,42.86559173255307
+117706,5522,345,Outside Sales,Amazon.com Inc.,,AMZN,6.247736327417602
+8512,2571,246,Fund My Deal,Ameren Corporation,,AEE,9.56826137689615
+23915,11736,243,Fund My Deal,"American Electric Power Co., Inc.",,AEP,2.0705521472392636
+72290,31487,7600,Move On,American Express Company,,AXP,24.13694540604059
+31253,2711,206,Move On,American Tower Corporation,,AMT,7.598672076724456
+14662,5659,986,Move On,"Ameriprise Financial, Inc.",,AMP,17.4235730694469
+12191,5633,1484,Set Up My Loan,AmerisourceBergen Corporation,,ABC,26.344754127463162
+78660,28488,4506,Keep Payments Simple,Amgen Inc.,,AMGN,15.817186183656275
+11664,3710,810,Keep Me In My Car,Amphenol Corporation,,APH,21.83288409703504
+43985,13368,3765,Close My Account,Anadarko Petroleum Corporation,,APC,28.16427289048474
+13463,4402,870,Keep Me In My Car,"Analog Devices, Inc.",,ADI,19.76374375283962
+18735,6675,1580,Navigate My Account,Aon plc,,AON,23.670411985018728
+29247,24107,8625,Close My Account,Apache Corp.,,APA,35.77798979549508
+1875,5139,2281,Help Me Catch Up,Apollo Group Inc.,,APOL,44.38606732827398
+400236,134527,18844,Keep Me In My Car,Apple Inc.,,AAPL,14.007596987965242
+16057,7443,2172,Keep Me In My Car,"Applied Inside Sales, Inc.",,AMAT,29.181781539701735
+21951,15613,4260,Help Me Catch Up,Archer Daniels Midland Company,,ADM,27.284954845321206
+3614,4354,1844,Navigate My Account,Assurant Inc.,,AIZ,42.351860358291226
+206594,67738,17819,Manage My Leads,"AT&T, Inc.",,T,26.305766334996605
+8583,1809,263,Keep Me In My Car,"Autodesk, Inc.",,ADSK,14.538419016030957
+31167,11245,4175,Keep Me In My Car,"Automatic Data Processing, Inc.",,ADP,37.12761227212094
+14265,6915,2182,Outside Sales,"AutoZone, Inc.",,AZO,31.55459146782357
+19776,10790,4712,Close My Account,Baker Hughes Incorporated,,BHI,43.670064874884154
+7038,3374,827,Inside Sales,Ball Corporation,,BLL,24.510966212211027
+132141,31231,12417,Move On,Bank of America Corporation,,BAC,39.758573212513205
+38097,14912,1922,Set Up My Loan,Baxter International Inc.,,BAX,12.888948497854077
+21263,11086,4631,Move On,BB&T Corporation,,BBT,41.7734079018582
+9808,2511,879,Help Me Catch Up,"Beam, Inc.",,BEAM,35.00597371565114
+18516,8911,2166,Set Up My Loan,"Becton, Dickinson and Company",,BDX,24.307036247334754
+14440,6329,2405,Outside Sales,Bed Bath & Beyond Inc.,,BBBY,37.999683994311894
+4156,1697,505,Inside Sales,"Bemis Company, Inc.",,BMS,29.758397171479082
+259564,96365,22584,Move On,Berkshire Hathaway Inc.,,BRK.A,23.435894775073937
+8795,11764,4396,Outside Sales,"Best Buy Co., Inc.",,BBY,37.36824209452567
+45875,8132,2623,Keep Payments Simple,Biogen Idec Inc.,,BIIB,32.25528775209051
+42698,13734,4044,Move On,"BlackRock, Inc.",,BLK,29.445172564438618
+6351,2664,424,Keep Me In My Car,BMC Software Inc.,,BMC,15.915915915915916
+8425,2467,691,Help Me Catch Up,BorgWarner Inc.,,BWA,28.009728415079042
+66915,28293,4460,Keep Payments Simple,Bristol-Myers Squibb Company,,BMY,15.763616442229527
+19096,3223,96,Keep Me In My Car,Broadcom Corp.,,BRCM,2.9785913744958115
+15070,4131,1288,Help Me Catch Up,Brown-Forman Corporation,,BF.B,31.178891309610265
+11079,5693,1992,Keep Me In My Car,CA Technologies,,CA,34.990339012822766
+3826,810,132,Help Me Catch Up,Cablevision Systems Corporation,,CVC,16.296296296296298
+14410,1488,60,Close My Account,Cabot Oil & Gas Corporation,,COG,4.032258064516129
+15476,4505,1149,Close My Account,Cameron International Corporation,,CAM,25.504994450610432
+14197,6633,1967,Help Me Catch Up,Campbell Soup Company,,CPB,29.654756520428162
+31996,19740,6041,Move On,Capital One Financial Corp.,,COF,30.602836879432623
+14579,8109,2555,Set Up My Loan,"Cardinal Health, Inc.",,CAH,31.50820076458256
+7678,2237,348,Set Up My Loan,CareFusion Corporation,,CFN,15.556548949485919
+9670,2439,918,Outside Sales,CarMax Inc.,,KMX,37.638376383763834
+26166,11794,74,Help Me Catch Up,Carnival Corporation,,CCL,0.6274376801763608
+55148,28835,6032,Vehicle Resolution,Caterpillar Inc.,,CAT,20.91902202184845
+48876,3720,784,Keep Payments Simple,Celgene Corporation,,CELG,21.0752688172043
+10315,4495,160,Fund My Deal,"CenterPoint Close My Account, Inc.",,CNP,3.5595105672969964
+22630,5724,1033,Manage My Leads,"CenturyLink, Inc.",,CTL,18.04682040531097
+16088,2198,554,Set Up My Loan,Cerner Corporation,,CERN,25.204731574158327
+11498,8790,2666,Inside Sales,"CF Industries Holdings, Inc.",,CF,30.329920364050057
+9523,3966,1335,Vehicle Resolution,CH Robinson Worldwide Inc.,,CHRW,33.66111951588502
+228869,219880,85464,Close My Account,Chevron Corporation,,CVX,38.868473712934325
+10444,1542,447,Help Me Catch Up,"Chipotle Mexican Grill, Inc.",,CMG,28.988326848249027
+18722,10069,2655,Set Up My Loan,Cigna Corp.,,CI,26.36806038335485
+7804,3551,873,Navigate My Account,Cincinnati Financial Corp.,,CINF,24.5846240495635
+5431,2633,959,Vehicle Resolution,Cintas Corporation,,CTAS,36.422331940751995
+109679,54808,11582,Keep Me In My Car,"Cisco Systems, Inc.",,CSCO,21.13195153992118
+12699,1816,190,Keep Me In My Car,"Citrix Systems, Inc.",,CTXS,10.462555066079295
+2998,3855,1291,Inside Sales,Cliffs Natural Resources Inc.,,CLF,33.48897535667964
+20098,9133,3915,Move On,CME Group Inc.,,CME,42.86652797547356
+7535,2276,94,Fund My Deal,CMS Close My Account Corp.,,CMS,4.130052724077329
+14039,7177,2338,Help Me Catch Up,"Coach, Inc.",,COH,32.57628535599833
+10155,4452,1026,Help Me Catch Up,Coca-Cola Enterprises Inc.,,CCE,23.045822102425877
+22562,5002,1024,Keep Me In My Car,Cognizant Technology Solutions Corporation,,CTSH,20.471811275489806
+54989,20199,6017,Help Me Catch Up,Colgate-Palmolive Co.,,CL,29.788603396207733
+108363,39433,10034,Help Me Catch Up,Comcast Corporation,,CMCS.A,25.44569269393655
+6493,2699,1121,Move On,Comerica Incorporated,,CMA,41.53390144497962
+14421,5206,2074,Help Me Catch Up,"ConAgra Foods, Inc.",,CAG,39.83864771417595
+7595,3696,714,Close My Account,CONSOL Close My Account Inc.,,CNX,19.318181818181817
+18006,9045,418,Fund My Deal,Consolidated Edison Inc.,,ED,4.621337755666114
+19663,16262,1344,Keep Me In My Car,Corning Inc.,,GLW,8.264666092731522
+46709,12652,4301,Outside Sales,Costco Wholesale Corporation,,COST,33.99462535567499
+6503,4369,1821,Set Up My Loan,Coventry Set Up My Loan Inc.,,CVH,41.68001831082628
+31698,10426,2858,Set Up My Loan,Covidien plc,,COV,27.412238634183772
+8251,3765,1051,Set Up My Loan,CR Bard Inc.,,BCR,27.91500664010624
+24466,14424,1998,Vehicle Resolution,CSX Corp.,,CSX,13.851913477537437
+21408,9546,2306,Vehicle Resolution,Cummins Inc.,,CMI,24.15671485438927
+69489,33466,12818,Outside Sales,CVS Caremark Corporation,,CVS,38.30155979202773
+42076,12401,1951,Vehicle Resolution,Danaher Corp.,,DHR,15.732602209499234
+6478,3387,605,Help Me Catch Up,"Darden Restaurants, Inc.",,DRI,17.86241511662238
+13267,4748,1206,Set Up My Loan,DaVita HealthCare Partners Inc.,,DVA,25.40016849199663
+33689,19201,5378,Vehicle Resolution,Deere & Company,,DE,28.008957866777774
+24832,20110,3496,Keep Me In My Car,Dell Inc.,,DELL,17.3843858776728
+13397,13835,1265,Help Me Catch Up,Delphi Automotive PLC,,DLPH,9.143476689555476
+6710,3155,166,Close My Account,Denbury Resources Inc.,,DNR,5.261489698890649
+5886,2019,414,Set Up My Loan,DENTSPLY International Inc.,,XRAY,20.505200594353642
+9580,8392,2219,Close My Account,"Diamond Offshore Drilling, Inc.",,DO,26.44184938036225
+31807,18633,4751,Help Me Catch Up,DIRECTV,,DTV,25.497772768743626
+21654,13837,4492,Move On,Discover Financial Services,,DFS,32.463684324636844
+28071,5829,1806,Help Me Catch Up,"Discovery Communications, Inc.",,DISC.A,30.983015954709213
+16479,3174,1043,Help Me Catch Up,Dollar General Corporation,,DG,32.86074354127284
+10563,2899,1051,Help Me Catch Up,"Dollar Tree, Inc.",,DLTR,36.25388064849948
+34641,16894,6147,Fund My Deal,"Dominion Resources, Inc.",,D,36.38569906475672
+12741,5314,1251,Vehicle Resolution,Dover Corporation,,DOV,23.541588257433194
+7545,-3785,-736,Help Me Catch Up,DR Horton Inc.,,DHI,19.445178335535008
+9521,4042,1577,Help Me Catch Up,"Dr Pepper Snapple Group, Inc.",,DPS,39.01533894111826
+12025,5669,346,Fund My Deal,DTE Close My Account Company,,DTE,6.103369200917269
+51507,13084,432,Fund My Deal,Duke Close My Account Corporation,,DUK,3.301742586365026
+3352,2439,476,Vehicle Resolution,Dun & Bradstreet Corp.,,DNB,19.516195161951618
+2890,-5238,-352,Move On,E*TRADE Financial Corporation,,ETFC,6.72012218403971
+44851,18474,3464,Inside Sales,E. I. du Pont de Nemours and Company,,DD,18.75067662661037
+10520,3335,815,Inside Sales,Eastman Chemical Co.,,EMN,24.43778110944528
+28514,6338,1036,Vehicle Resolution,Eaton Corporation plc,,ETN,16.345850426001892
+72362,14906,2880,Keep Me In My Car,eBay Inc.,,EBAY,19.32107876023078
+23661,4329,1061,Inside Sales,Ecolab Inc.,,ECL,24.509124509124508
+16607,9301,1180,Fund My Deal,Edison International,,EIX,12.686807870121493
+9267,1562,171,Set Up My Loan,Edwards Lifesciences Corp.,,EW,10.947503201024327
+62141,25210,4894,Keep Payments Simple,Eli Lilly and Company,,LLY,19.41293137643792
+48586,14598,1681,Keep Me In My Car,EMC Corporation,,EMC,11.515276065214413
+40429,18813,6070,Vehicle Resolution,Emerson Electric Co.,,EMR,32.2649231914102
+13677,6154,1079,Close My Account,Ensco plc,,ESV,17.53331166720832
+12109,9714,636,Fund My Deal,Entergy Corporation,,ETR,6.547251389746758
+34502,9848,1144,Close My Account,"EOG Resources, Inc.",,EOG,11.616571892770105
+6862,2359,845,Vehicle Resolution,Equifax Inc.,,EFX,35.82026282323018
+30312,22600,3809,Fund My Deal,Exelon Corporation,,EXC,16.853982300884955
+7535,3105,1123,Vehicle Resolution,Expeditors International of Washington Inc.,,EXPD,36.16747181964573
+46959,9587,3353,Set Up My Loan,Express Scripts Holding Company,,ESRX,34.97444456034213
+396968,394595,146254,Close My Account,Exxon Mobil Corporation,,XOM,37.06433178322077
+5719,1408,428,Keep Me In My Car,"F5 Networks, Inc.",,FFIV,30.397727272727273
+6878,3040,978,Help Me Catch Up,Family Dollar Stores Inc.,,FDO,32.171052631578945
+14918,2806,1057,Vehicle Resolution,Fastenal Company,,FAST,37.66928011404134
+30182,13208,3076,Vehicle Resolution,FedEx Corporation,,FDX,23.288915808600848
+11532,2867,1230,Keep Me In My Car,"Fidelity National Information Services, Inc.",,FIS,42.90198814091385
+14170,4621,1624,Move On,Fifth Third Bancorp,,FITB,35.14390824496862
+2357,1975,273,Keep Me In My Car,"First Solar, Inc.",,FSLR,13.822784810126583
+18569,9298,1162,Fund My Deal,FirstClose My Account Corp.,,FE,12.497311249731125
+11436,4513,1677,Keep Me In My Car,"Fiserv, Inc.",,FISV,37.159317527143806
+3709,1782,551,Keep Me In My Car,"FLIR Systems, Inc.",,FLIR,30.920314253647586
+7771,3269,775,Vehicle Resolution,Flowserve Corp.,,FLS,23.707555827470173
+10169,5233,1628,Vehicle Resolution,Fluor Corporation,,FLR,31.110261800114657
+7854,2491,213,Inside Sales,FMC Corp.,,FMC,8.550782818145324
+12534,3112,732,Close My Account,"FMC Technologies, Inc.",,FTI,23.52185089974293
+50216,7397,251,Help Me Catch Up,Ford Motor Co.,,F,3.3932675408949575
+9983,6416,1186,Keep Payments Simple,Forest Laboratories Inc.,,FRX,18.48503740648379
+5574,1936,529,Help Me Catch Up,"Fossil, Inc.",,FOSL,27.324380165289256
+31767,13374,3711,Move On,Franklin Resources Inc.,,BEN,27.74786899955137
+4070,1574,185,Manage My Leads,Frontier Communications Corporation,,FTR,11.753494282083862
+3566,3088,847,Outside Sales,GameStop Corp.,,GME,27.428756476683937
+6603,4487,501,Help Me Catch Up,Garmin Ltd.,,GRMN,11.165589480722087
+24456,18213,5758,Vehicle Resolution,General Dynamics Corp.,,GD,31.61478065118322
+239776,109012,17511,Vehicle Resolution,General Electric Company,,GE,16.063369170366567
+31395,12808,3171,Help Me Catch Up,"General Mills, Inc.",,GIS,24.7579637726421
+12061,4901,1858,Help Me Catch Up,Genuine Parts Company,,GPC,37.91063048357478
+71932,19562,4659,Keep Payments Simple,Gilead Sciences Inc.,,GILD,23.816583171454862
+255440,56416,9683,Keep Me In My Car,Google Inc.,,GOOG,17.163570618264323
+7715,4129,988,Help Me Catch Up,"H&R Block, Inc.",,HRB,23.928311939937032
+23219,7523,1307,Help Me Catch Up,H. J. Heinz Company,,HNZ,17.37338827595374
+35759,19904,5670,Close My Account,Halliburton Company,,HAL,28.486736334405144
+11532,4837,1556,Help Me Catch Up,"Harley-Davidson, Inc.",,HOG,32.16869960719454
+5049,4295,1480,Keep Me In My Car,Harris Corporation,,HRS,34.458672875436555
+5568,2881,563,Help Me Catch Up,Hasbro Inc.,,HAS,19.5418257549462
+23427,2139,14,Move On,"HCP, Inc.",,HCP,0.6545114539504441
+18343,729,7,Move On,"Set Up My Loan REIT, Inc.",,HCN,0.9602194787379973
+6536,3999,597,Close My Account,"Helmerich & Payne, Inc.",,HP,14.928732183045762
+42632,37088,6912,Keep Me In My Car,Hewlett-Packard Company,,HPQ,18.636755823986196
+57554,14780,3222,Vehicle Resolution,Honeywell International Inc.,,HON,21.79972936400541
+10674,3560,1195,Help Me Catch Up,Hormel Foods Corporation,,HRL,33.56741573033708
+5057,1383,248,Keep Payments Simple,Hospira Inc.,,HSP,17.932031814895154
+12841,554,43,Move On,Host Hotels & Resorts Inc.,,HST,7.76173285198556
+12327,9779,3822,Set Up My Loan,Humana Inc.,,HUM,39.08375089477452
+27946,14434,4495,Vehicle Resolution,Illinois Tool Works Inc.,,ITW,31.14174864902314
+4661,1652,188,Fund My Deal,"Integrys Close My Account Group, Inc.",,TEG,11.380145278450364
+104416,71255,19607,Keep Me In My Car,Intel Corporation,,INTC,27.516665497158094
+11349,3485,1019,Move On,"IntercontinentalExchange, Inc.",,ICE,29.239598278335723
+233289,111970,16861,Keep Me In My Car,International Business Machines Corporation,I.B.M.,IBM,15.058497811913906
+6027,2068,512,Inside Sales,International Flavors & Fragrances Inc.,,IFF,24.758220502901352
+4289,2671,961,Help Me Catch Up,International Game Technology,,IGT,35.97903406963684
+20919,5316,560,Inside Sales,International Paper Company,,IP,10.534236267870579
+18921,5042,1457,Keep Me In My Car,Intuit Inc.,,INTU,28.897262990876637
+19950,3144,704,Set Up My Loan,"Intuitive Surgical, Inc.",,ISRG,22.391857506361323
+12681,4860,1242,Move On,Invesco Ltd.,,IVZ,25.555555555555557
+6929,1779,681,Vehicle Resolution,Iron Mountain Inc.,,IRM,38.27993254637437
+3488,5180,1731,Outside Sales,"J. C. Penney Company, Inc.",,JCP,33.41698841698842
+7036,3233,1106,Vehicle Resolution,Jacobs Engineering Group Inc.,,JEC,34.2097123414785
+226868,89050,18449,Keep Payments Simple,Johnson & Johnson,,JNJ,20.717574396406512
+22781,7501,2364,Help Me Catch Up,Johnson Controls Inc.,,JCI,31.515797893614184
+6036,4339,918,Vehicle Resolution,"Joy Global, Inc.",,JOY,21.15694860566951
+184773,122170,35136,Move On,JPMorgan Chase & Co.,,JPM,28.759924695096995
+9083,3193,618,Keep Me In My Car,"Juniper Networks, Inc.",,JNPR,19.35483870967742
+23301,9159,2554,Help Me Catch Up,Kellogg Company,,K,27.885140299159296
+38468,15354,3472,Help Me Catch Up,Kimberly-Clark Corporation,,KMB,22.612999869740783
+9395,1114,57,Move On,Kimco Realty Corporation,,KIM,5.11669658886894
+8638,3010,705,Keep Me In My Car,KLA-Tencor Corporation,,KLAC,23.421926910299003
+10661,10100,3456,Outside Sales,Kohl's Corp.,,KSS,34.21782178217822
+13513,5780,1978,Outside Sales,"L Brands, Inc.",,LTD,34.221453287197235
+7381,7568,1796,Vehicle Resolution,L-3 Communications Holdings Inc.,,LLL,23.731501057082454
+8635,5199,1759,Set Up My Loan,Laboratory Corp. of America Holdings,,LH,33.83342950567417
+6697,2597,277,Keep Me In My Car,Lam Research Corporation,,LRCX,10.666153253754333
+4053,-709,-264,Move On,Legg Mason Inc.,,LM,37.23554301833568
+4745,1304,403,Help Me Catch Up,"Leggett & Platt, Incorporated",,LEG,30.904907975460123
+7494,-3990,-1207,Help Me Catch Up,Lennar Corp.,,LEN,30.25062656641604
+10167,1835,96,Move On,Leucadia National Corporation,,LUK,5.231607629427793
+8472,4223,387,Navigate My Account,Lincoln National Corporation,,LNC,9.16410134975136
+8342,3198,767,Keep Me In My Car,Linear Technology Corporation,,LLTC,23.983739837398375
+30435,24657,5769,Vehicle Resolution,Lockheed Martin Corporation,,LMT,23.397006935150262
+17171,12038,2668,Navigate My Account,Loews Corporation,,L,22.163150024921084
+15598,9469,3563,Help Me Catch Up,"Lorillard, Inc.",,LO,37.62804942443764
+42430,21974,8555,Outside Sales,Lowe's Companies Inc.,,LOW,38.932374624556296
+33833,4861,1423,Inside Sales,LyondellBasell Industries NV,,LYB,29.273811972845092
+13014,6093,1586,Move On,M&T Bank Corporation,,MTB,26.029870343016576
+27580,15976,1860,Close My Account,Marathon Petroleum Corporation,,MPC,11.642463695543315
+12948,3169,776,Help Me Catch Up,"Marriott International, Inc.",,MAR,24.487219943199747
+20532,5770,2037,Navigate My Account,"Marsh & McLennan Companies, Inc.",,MMC,35.303292894280766
+65605,12941,3986,Keep Me In My Car,Mastercard Incorporated,,MA,30.801329109033304
+14805,4614,905,Help Me Catch Up,"Mattel, Inc.",,MAT,19.614217598612917
+9375,2664,612,Help Me Catch Up,"McCormick & Company, Incorporated",,MKC,22.972972972972972
+101783,39309,10627,Help Me Catch Up,McDonald's Corp.,,MCD,27.034521356432368
+24905,9236,1114,Set Up My Loan,McKesson Corporation,,MCK,12.061498484192292
+15517,4064,1242,Help Me Catch Up,Mead Johnson Nutrition Company,,MJN,30.561023622047244
+6419,1680,247,Inside Sales,MeadWestvaco Corporation,,MWV,14.702380952380953
+47020,20448,4038,Set Up My Loan,"Medtronic, Inc.",,MDT,19.747652582159624
+137457,46439,12893,Keep Payments Simple,Merck & Co. Inc.,,MRK,27.763302396692435
+39913,20831,3759,Navigate My Account,"MetLife, Inc.",,MET,18.045221064759254
+4115,2166,20,Manage My Leads,"MetroPCS Communications, Inc.",,PCS,0.9233610341643582
+6974,2061,154,Keep Me In My Car,Microchip Technology Inc.,,MCHP,7.472100921882581
+239477,139087,30100,Keep Me In My Car,Microsoft Corporation,,MSFT,21.64113109061235
+4604,1312,464,Keep Me In My Car,Molex Incorporated,,MOLX,35.36585365853659
+9170,3918,336,Help Me Catch Up,Molson Coors Brewing Company,,TAP,8.575803981623277
+56160,14024,3305,Inside Sales,Monsanto Company,,MON,23.566742726754136
+8610,2105,832,Help Me Catch Up,Monster Beverage Corporation,,MNST,39.524940617577194
+11803,5076,1653,Move On,Moody's Corp.,,MCO,32.565011820330966
+42628,16718,6803,Move On,Morgan Stanley,,MS,40.69266658691231
+12145,9684,3271,Close My Account,Murphy Oil Corporation,,MUR,33.77736472532012
+4595,2885,920,Close My Account,Nabors Industries Ltd.,,NBR,31.889081455805893
+28939,16022,5961,Close My Account,"National Oilwell Varco, Inc.",,NOV,37.20509299712895
+12229,2704,177,Keep Me In My Car,"NetApp, Inc.",,NTAP,6.545857988165681
+9130,1092,279,Outside Sales,"Netflix, Inc.",,NFLX,25.54945054945055
+7234,2077,481,Help Me Catch Up,Newell Rubbermaid Inc.,,NWL,23.158401540683677
+19378,12721,5532,Inside Sales,Newmont Mining Corporation,,NEM,43.48714723685245
+73032,16800,6919,Help Me Catch Up,News Corp.,,NWSA,41.18452380952381
+33946,13255,61,Fund My Deal,"NextEra Close My Account, Inc.",,NEE,0.46020369671821953
+53572,15004,3995,Help Me Catch Up,Nike Inc.,,NKE,26.626233004532125
+9392,2904,366,Fund My Deal,NiSource Inc.,,NI,12.603305785123966
+9565,7473,1276,Close My Account,Noble Corp.,,NE,17.074802622775323
+20649,5871,1268,Close My Account,"Noble Close My Account, Inc.",,NBL,21.597683529211377
+10825,5733,2286,Outside Sales,Nordstrom Inc.,,JWN,39.87441130298273
+23700,14652,3108,Vehicle Resolution,Norfolk Southern Corp.,,NSC,21.21212121212121
+13787,3227,490,Fund My Deal,Northeast Fund My Deal,,NU,15.184381778741866
+13053,6458,1778,Move On,Northern Trust Corporation,,NTRS,27.531743573861878
+8649,4727,178,Fund My Deal,"NRG Close My Account, Inc.",,NRG,3.765601861645864
+13963,7609,2432,Inside Sales,Nucor Corporation,,NUE,31.962150085425154
+7683,2205,98,Keep Me In My Car,NVIDIA Corporation,,NVDA,4.444444444444445
+9121,2333,734,Move On,"NYSE Euronext, Inc.",,NYX,31.46163737676811
+11569,3554,980,Outside Sales,O'Reilly Automotive Inc.,,ORLY,27.574563871693865
+65354,52331,17100,Close My Account,Occidental Petroleum Corporation,,OXY,32.676616154860405
+15543,9180,1965,Help Me Catch Up,Omnicom Group Inc.,,OMC,21.405228758169933
+10022,4846,120,Fund My Deal,ONEOK Inc.,,OKE,2.4762690879075526
+152437,54270,13204,Keep Me In My Car,Oracle Corporation,,ORCL,24.33020084761378
+17049,7199,1747,Vehicle Resolution,PACCAR Inc.,,PCAR,24.26725934157522
+7439,1865,640,Vehicle Resolution,Pall Corporation,,PLL,34.316353887399465
+13409,6922,1671,Vehicle Resolution,Parker-Hannifin Corporation,,PH,24.140421843397863
+3961,2031,692,Set Up My Loan,"Patterson Companies, Inc.",,PDCO,34.07188577055638
+12758,4792,1571,Keep Me In My Car,"Paychex, Inc.",,PAYX,32.78380634390651
+5484,4486,883,Close My Account,Peabody Close My Account Corp.,,BTU,19.68345965225145
+10811,985,391,Vehicle Resolution,Pentair Ltd.,,PNR,39.69543147208122
+4363,1344,432,Move On,People's United Financial Inc.,,PBCT,32.142857142857146
+5445,1564,50,Fund My Deal,"Pepco Holdings, Inc.",,POM,3.1969309462915603
+124140,48137,10259,Help Me Catch Up,"Pepsico, Inc.",,PEP,21.31208841431747
+3807,634,242,Set Up My Loan,PerkinElmer Inc.,,PKI,38.170347003154575
+11156,1743,360,Keep Payments Simple,Perrigo Co.,,PRGO,20.65404475043029
+6512,2161,765,Outside Sales,"PetSmart, Inc.",,PETM,35.400277649236465
+209533,63501,27312,Keep Payments Simple,Pfizer Inc.,,PFE,43.010346293759156
+19237,8817,129,Fund My Deal,PG&E Corp.,,PCG,1.4630826811840763
+155089,63907,17264,Help Me Catch Up,"Philip Morris International, Inc.",,PM,27.014255089426822
+39455,19535,3331,Close My Account,Phillips 66,,PSX,17.051446122344508
+6448,2922,166,Fund My Deal,Pinnacle West Capital Corporation,,PNW,5.68104038329911
+16066,2129,148,Close My Account,Pioneer Natural Resources Co.,,PXD,6.951620479098168
+2966,3714,1023,Vehicle Resolution,Pitney Bowes Inc.,,PBI,27.544426494345718
+18777,7134,2026,Inside Sales,PPG Industries Inc.,,PPG,28.399215026633026
+18462,8614,1002,Fund My Deal,PPL Corporation,,PPL,11.63222660784769
+32988,11521,2391,Inside Sales,Praxair Inc.,,PX,20.75340682232445
+26794,8676,2263,Vehicle Resolution,Precision Castparts Corp.,,PCP,26.083448593822038
+34737,4716,897,Outside Sales,priceline.com Incorporated,,PCLN,19.020356234096692
+9873,4918,818,Navigate My Account,Principal Financial Group Inc.,,PFG,16.632777551850346
+215227,86212,22378,Help Me Catch Up,Procter & Gamble Co.,,PG,25.956943348953743
+15460,7398,2504,Navigate My Account,Progressive Corp.,,PGR,33.84698567180319
+26071,16352,3255,Navigate My Account,"Prudential Financial, Inc.",,PRU,19.90582191780822
+17476,13842,3966,Fund My Deal,Public Service Enterprise Group Inc.,,PEG,28.651928912006934
+7644,-7516,-1641,Help Me Catch Up,"PulteGroup, Inc.",,PHM,21.833422032996275
+8759,1340,405,Help Me Catch Up,PVH Corp.,,PVH,30.223880597014926
+5534,2876,49,Close My Account,"QEP Resources, Inc.",,QEP,1.7037552155771905
+113156,26597,5180,Keep Me In My Car,QUALCOMM Incorporated,Qualcomm Incorporated,QCOM,19.475880738429147
+5967,1543,448,Vehicle Resolution,"Quanta Services, Inc.",,PWR,29.034348671419313
+9005,6310,2050,Set Up My Loan,Quest Diagnostics Inc.,,DGX,32.48811410459588
+15385,4420,1265,Help Me Catch Up,Ralph Lauren Corporation,,RL,28.619909502262445
+12853,1123,4,Close My Account,Range Resources Corporation,,RRC,0.3561887800534283
+19010,15576,2992,Vehicle Resolution,Raytheon Co.,,RTN,19.2090395480226
+9266,819,42,Keep Me In My Car,"Red Hat, Inc.",,RHT,5.128205128205129
+11781,4100,1500,Vehicle Resolution,"Republic Services, Inc.",,RSG,36.58536585365854
+24706,12067,4262,Help Me Catch Up,Reynolds American Inc.,,RAI,35.31946631308527
+4993,1686,631,Vehicle Resolution,Robert Half International Inc.,,RHI,37.425860023724795
+12176,4249,1195,Vehicle Resolution,Rockwell Automation Inc.,,ROK,28.124264532831255
+8616,5162,1066,Vehicle Resolution,Rockwell Collins Inc.,,COL,20.650910499806276
+12194,2886,798,Vehicle Resolution,Roper Industries Inc.,,ROP,27.65072765072765
+13052,3987,1381,Outside Sales,Ross Stores Inc.,,ROST,34.6375721093554
+4153,2514,834,Close My Account,Rowan Companies plc,,RDC,33.17422434367542
+3071,1724,107,Vehicle Resolution,"Ryder System, Inc.",,R,6.206496519721577
+6072,4547,1971,Outside Sales,Safeway Inc.,,SWY,43.34726193094348
+4736,3725,1604,Keep Me In My Car,"SAIC, Inc.",,SAI,43.060402684563755
+24436,358,61,Keep Me In My Car,"salesforce.com, inc",,CRM,17.039106145251395
+7246,3202,450,Fund My Deal,SCANA Corp.,,SCG,14.05371642723298
+99773,35973,7093,Close My Account,Schlumberger Limited,,SLB,19.71756595224196
+9925,3915,1275,Help Me Catch Up,"Scripps Networks Interactive, Inc.",,SNI,32.56704980842912
+12912,4095,94,Keep Me In My Car,Seagate Technology Public Limited Company,,STX,2.2954822954822953
+20001,8228,1011,Fund My Deal,Sempra Close My Account,,SRE,12.287311618862422
+9129,3257,860,Inside Sales,Sigma-Aldrich Corporation,,SIAL,26.404666871354006
+4819,2015,545,Vehicle Resolution,Snap-on Inc.,,SNA,27.047146401985113
+41267,17872,2157,Fund My Deal,Southern Company,,SO,12.069158460161146
+9337,3253,557,Vehicle Resolution,Southwest Airlines Co.,,LUV,17.122656009837073
+13097,1764,85,Close My Account,Southwestern Close My Account Co.,,SWN,4.81859410430839
+20289,9066,1333,Close My Account,Spectra Close My Account Corp.,,SE,14.70328700639753
+18968,-47436,-24,Manage My Leads,Sprint Nextel Corp.,,S,0.05059448520111308
+11873,5580,1226,Set Up My Loan,St. Jude Medical Inc.,,STJ,21.97132616487455
+12567,2350,743,Vehicle Resolution,"Stanley Black & Decker, Inc.",,SWK,31.617021276595743
+8929,8256,2496,Outside Sales,"Staples, Inc.",,SPLS,30.232558139534884
+43549,7379,2058,Help Me Catch Up,Starbucks Corporation,,SBUX,27.88995798888738
+12007,2119,172,Help Me Catch Up,Starwood Hotels & Resorts Worldwide Inc.,,HOT,8.117036337895234
+26415,14658,2703,Move On,State Street Corporation,,STT,18.44044207941056
+9050,1830,413,Vehicle Resolution,"Stericycle, Inc.",,SRCL,22.56830601092896
+24656,9694,3048,Set Up My Loan,Stryker Corporation,,SYK,31.442129152052818
+15330,4069,1257,Move On,"SunTrust Banks, Inc.",,STI,30.892111083804373
+20017,10644,4652,Help Me Catch Up,Sysco Corporation,,SYY,43.7053739195791
+19197,6318,2169,Move On,"T. Rowe Price Group, Inc.",,TROW,34.33048433048433
+44422,25481,8364,Help Me Catch Up,Target Corp.,,TGT,32.824457438876024
+3965,2199,22,Fund My Deal,"TECO Close My Account, Inc.",,TE,1.0004547521600728
+8798,2467,277,Keep Me In My Car,Teradata Corporation,,TDC,11.228212403729225
+2965,430,86,Keep Me In My Car,Teradyne Inc.,,TER,20
+7416,3238,776,Close My Account,Tesoro Corporation,,TSO,23.96541074737492
+38808,17631,4379,Keep Me In My Car,Texas Instruments Inc.,,TXN,24.836934944132494
+7889,2978,888,Vehicle Resolution,Textron Inc.,,TXT,29.818670248488917
+9389,11225,3886,Fund My Deal,The AES Corporation,,AES,34.619153674832965
+23925,10241,1595,Navigate My Account,The Allstate Corporation,,ALL,15.574650912996777
+65597,27654,1939,Vehicle Resolution,The Boeing Company,,BA,7.011643885152238
+21524,8778,3636,Move On,The Charles Schwab Corporation,,SCHW,41.42173615857826
+23062,16489,4169,Navigate My Account,The Chubb Corporation,,CB,25.283522348232154
+11441,4304,1734,Help Me Catch Up,The Clorox Company,,CLX,40.28810408921933
+182102,61845,9431,Help Me Catch Up,The Coca-Cola Company,,KO,15.249413857223704
+37065,14006,5625,Inside Sales,The Dow Chemical Company,,DOW,40.161359417392546
+24896,4773,1513,Help Me Catch Up,The EstÃ©e Lauder Companies Inc.,,,31.699141001466582
+17146,9472,3762,Outside Sales,"The Gap, Inc.",,GPS,39.717060810810814
+69111,70037,22170,Move On,"The Goldman Sachs Group, Inc.",,GS,31.65469680311835
+19103,4291,1674,Help Me Catch Up,The Hershey Company,,HSY,39.01188534141226
+105799,34035,13766,Outside Sales,"The Home Depot, Inc.",,HD,40.44659908917291
+5526,2823,535,Help Me Catch Up,"The Interpublic Group of Companies, Inc.",,IPG,18.951470067304285
+10543,3041,1034,Help Me Catch Up,The J. M. Smucker Company,,SJM,34.00197303518579
+16605,8769,2986,Outside Sales,The Kroger Co.,,KR,34.05177329227962
+14632,7190,2623,Move On,"The McGraw-Hill Companies, Inc.",,MHP,36.48122392211405
+25085,13447,2904,Inside Sales,The Mosaic Company,,MOS,21.59589499516621
+4805,3345,1103,Move On,"The Nasdaq OMX Group, Inc.",,NDAQ,32.9745889387145
+34914,18316,2235,Move On,"The PNC Financial Services Group, Inc.",,PNC,12.20244594889714
+17135,4577,1000,Inside Sales,The Sherwin-Williams Company,,SHW,21.84837229626393
+34603,10502,3487,Outside Sales,"The TJX Companies, Inc.",,TJX,33.20319939059227
+32024,23467,4253,Navigate My Account,"The Travelers Companies, Inc.",,TRV,18.12332211190182
+106196,44715,14314,Help Me Catch Up,The Walt Disney Company,,DIS,32.01162920720116
+3258,1876,598,Help Me Catch Up,The Washington Post Company,,WPO,31.87633262260128
+8219,7181,1501,Keep Me In My Car,The Western Union Company,,WU,20.90238128394374
+28016,6359,1752,Set Up My Loan,"Thermo Fisher Scientific, Inc.",,TMO,27.55150180846045
+9014,2999,1143,Outside Sales,Tiffany & Co.,,TIF,38.11270423474492
+54545,14413,3684,Help Me Catch Up,Time Warner Inc.,,TWX,25.560258100326095
+5450,4243,892,Navigate My Account,Torchmark Corp.,,TMK,21.022861183125148
+4510,2116,742,Keep Me In My Car,"Total System Services, Inc.",,TSS,35.066162570888466
+6957,1064,358,Outside Sales,TripAdvisor Inc.,,TRIP,33.64661654135338
+8427,3225,1151,Help Me Catch Up,"Tyson Foods, Inc.",,TSN,35.689922480620154
+62798,31572,6575,Move On,U.S. Bancorp,,USB,20.825414924616748
+65395,25649,5103,Vehicle Resolution,Union Pacific Corporation,,UNP,19.895512495613865
+78736,20559,7381,Vehicle Resolution,"United Parcel Service, Inc.",,UPS,35.90155163188871
+2486,3763,622,Inside Sales,United States Steel Corp.,,X,16.529364868456017
+86050,39589,9552,Vehicle Resolution,United Technologies Corp.,,UTX,24.127914319634243
+63433,41701,14337,Set Up My Loan,UnitedHealth Group Incorporated,,UNH,34.38047049231433
+7075,6016,1702,Navigate My Account,Unum Group,,UNM,28.29122340425532
+5949,1765,618,Outside Sales,Urban Outfitters Inc.,,URBN,35.01416430594901
+18862,5746,1513,Help Me Catch Up,V.F. Corporation,,VFC,26.331360946745562
+23339,14930,1225,Close My Account,Valero Close My Account Corporation,,VLO,8.204956463496316
+7714,2964,762,Set Up My Loan,"Varian Medical Systems, Inc.",,VAR,25.708502024291498
+7041,707,92,Keep Me In My Car,"VeriSign, Inc.",,VRSN,13.012729844413013
+141285,62772,5398,Manage My Leads,Verizon Communications Inc.,,VZ,8.599375517746767
+32442,16022,5364,Help Me Catch Up,"Viacom, Inc.",,VIAB,33.47896642117089
+109944,16450,7342,Keep Me In My Car,Visa Inc.,,V,44.632218844984806
+16418,2417,152,Move On,Vornado Realty Trust,,VNO,6.288787753413322
+15643,5186,1803,Vehicle Resolution,"W.W. Grainger, Inc.",,GWW,34.766679521789435
+254473,130047,39832,Outside Sales,Wal-Mart Stores Inc.,,WMT,30.628926465047254
+45157,20826,6925,Outside Sales,Walgreen Co.,,WAG,33.25170460001921
+18052,9473,2704,Vehicle Resolution,"Waste Management, Inc.",,WM,28.544283753826665
+7968,2517,243,Set Up My Loan,Waters Corp.,,WAT,9.65435041716329
+20444,27961,9356,Set Up My Loan,WellPoint Inc.,,WLP,33.46089195665391
+195238,104261,23401,Move On,Wells Fargo & Company,,WFC,22.44463413932343
+12089,5982,63,Keep Me In My Car,Western Digital Corporation,,WDC,1.053159478435306
+8995,2441,510,Help Me Catch Up,Whirlpool Corp.,,WHR,20.893076607947563
+15520,2478,928,Outside Sales,"Whole Foods Market, Inc.",,WFM,37.44955609362389
+25392,6970,1087,Close My Account,"Williams Companies, Inc.",,WMB,15.595408895265424
+4979,3582,509,Manage My Leads,Windstream Corporation,,WIN,14.209938581797878
+9879,4047,217,Fund My Deal,Wisconsin Close My Account Corp.,,WEC,5.361996540647393
+3405,107,39,Close My Account,"WPX Close My Account, Inc.",,WPX,36.44859813084112
+8659,2102,640,Help Me Catch Up,Wyndham Worldwide Corporation,,WYN,30.44719314938154
+12380,2299,90,Help Me Catch Up,Wynn Resorts Ltd.,,WYNN,3.9147455415398
+14844,6765,51,Fund My Deal,Xcel Close My Account Inc.,,XEL,0.753880266075388
+10574,6374,656,Keep Me In My Car,Xerox Corporation,,XRX,10.291810480075306
+9610,3149,231,Keep Me In My Car,Xilinx Inc.,,XLNX,7.335662114957129
+5186,1748,424,Vehicle Resolution,Xylem Inc.,,XYL,24.25629290617849
+25858,10170,2812,Keep Me In My Car,Yahoo! Inc.,,YHOO,27.649950835791543
+30290,9276,1955,Help Me Catch Up,"Yum! Brands, Inc.",,YUM,21.07589478223372
+12421,6081,1652,Set Up My Loan,"Zimmer Holdings, Inc.",,ZMH,27.166584443348132

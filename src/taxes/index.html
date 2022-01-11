@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../css/styles.css" />
-    <title>Change in Airfares</title>
+    <title>Tax variation across S&P 500 companies</title>
   </head>
   <body class="font-sans m-0">
-    <div id="main-container" class="max-w-[600px] mx-auto pt-4 pb-16">
+    <div id="main-container" class="max-w-screen-lg mx-auto pt-4 pb-16">
       <a href="../" class="text-xs">← Back to list of all charts</a>
       <div class="max-w-7xl py-4">
         <h1 class="font-serif font-normal text-xl leading-none text-gray-900">
-          Change in Airfares
+          Tax variation across S&P 500 companies
         </h1>
       </div>
       <div
@@ -21,28 +21,17 @@
 
       <ul class="text-xs text-gray-700">
         <li>
-          Recreated in d3.js v7 from Economist's
+          Recreated in d3.js v7 (original was in v3) from a 2013 NYT article:
           <a
+            href="https://archive.nytimes.com/www.nytimes.com/interactive/2013/05/25/sunday-review/corporate-taxes.html"
             target="_blank"
-            href="https://infographics.economist.com/2019/AChristmasGiftForYou/AYearInGraphicDetail.pdf"
+            rel="noopener noreferrer"
+            >Across U.S. Companies, Tax Rates Vary Greatly</a
           >
-            A year in Graphic Detail 2019 [PDF]
-          </a>
-          (Page 10)
-        </li>
-        <li>
-          Added transitions and interactions, i.e. tooltip and style change on
-          hover.
-        </li>
-        <li>
-          Possibilities: Add a search feature, would make sense if the dataset
-          was larger.
-        </li>
-        <li>
           <a
-            href="https://github.com/shreshthmohan/data-viz-d3/tree/main/src/charts/fan"
+            href="https://static01.nyt.com/newsgraphics/2013/05/13/corporate-taxes/ee84b0191a75f5c652087293ab0efd4710e21f94/companies.tsv"
             target="_blank"
-            >Source</a
+            >(link to data file)</a
           >
         </li>
       </ul>
