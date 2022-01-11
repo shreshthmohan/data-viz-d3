@@ -1,16 +1,7 @@
-// global window
 export function processCorporateTaxData(data) {
-  // capitalization
-  // earnings
-  // taxes
-  // sector
-  // name
-  // alias
-  // symbol
-
+  // These values interfere with the simulation, so they need to be deleted
   const toDeleteProps = ['cx', 'cy', 'x', 'y']
 
-  // calculate Effective tax rate
   data.map(d => {
     d.company = d.name
     d['Effective tax rate'] = d.taxes / d.earnings

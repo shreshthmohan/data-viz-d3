@@ -15,6 +15,8 @@ import {
   forceY,
   forceCollide,
   schemePuOr,
+  min,
+  max,
 } from 'd3'
 import { colorLegend } from '../utils/colorLegend'
 import { preventOverflowThrottled } from '../utils/general'
@@ -53,7 +55,12 @@ export function renderChart({
     xValuePrefix = '',
     xValueFormatter = '',
     xValueSuffix = '',
-    reduceXTickByFactor = 1,
+    xAxisTickFormatter = val =>
+      xValuePrefix + formatNumber(val, xValueFormatter) + xValueSuffix,
+    additionalXAxisTickValues = [],
+    // reduceXTickByFactor = 1,
+
+    xOutsideDomainColor = '#ddd',
 
     /* sizeField */
     sizeRange = [2, 20],
@@ -80,17 +87,16 @@ export function renderChart({
   chartContainerSelector,
 }) {
   select('body').append('style').html(`
-    .g-searching circle.c-match {
-      stroke-width: 2;
-      stroke: #333;
+    .g-searching circle.c.c-match {
+      stroke-opacity: 1;
     }
     circle.c {
-      stroke-width: 0.5;
+      stroke-width: 1;
       stroke: #000;
+      stroke-opacity: 0.5;
     }
     circle.c.hovered {
-      stroke-width: 2;
-      stroke: #333;
+      stroke-opacity: 1;
     }
   `)
   const coreChartWidth = 700
@@ -145,12 +151,12 @@ export function renderChart({
     bg-white border border-slate-500 rounded px-2 py-1 text-xs
 
     after:absolute after:border-[6px] after:border-transparent
-    after:border-b-slate-500 after:-top-[calc(2*6px)]
+    after:border-t-slate-500 after:-bottom-[calc(2*6px)]
     after:z-10 after:left-[calc(50%-6px)]
 
     before:absolute before:border-[5px] before:border-transparent
-    before:left-[calc(50%-5px)] before:border-b-white 
-    before:-top-[calc(2*5px)] before:z-20
+    before:left-[calc(50%-5px)] before:border-t-white 
+    before:-bottom-[calc(2*5px)] before:z-20
    
     drop-shadow-md
     `,
@@ -320,29 +326,33 @@ export function renderChart({
 
   const xAxis = chartCore.append('g').attr('id', 'x-axis')
 
+  // console.log(xScale.ticks().length / reduceXTickByFactor)
+
+  // console.log('tick before:', xScale.ticks().length)
+
+  // xScale.ticks(xScale.ticks().length / reduceXTickByFactor)
+  // console.log('tick after:', xScale.ticks().length)
+
   function renderXAxisSplit() {
+    // console.log('tick x axis split:', xScale.ticks().length)
     xAxis
       .call(
         axisTop(xScale)
           .tickSize(-coreChartHeightSplit)
-          .tickFormat(
-            val =>
-              xValuePrefix + formatNumber(val, xValueFormatter) + xValueSuffix,
-          )
-          .ticks(xScale.ticks().length / reduceXTickByFactor),
+          .tickFormat(xAxisTickFormatter)
+          .tickValues([...xScale.ticks(), ...additionalXAxisTickValues]),
       )
       .call(g => g.selectAll('.tick line').attr('stroke-opacity', 0.1))
       .call(g => g.select('.domain').remove())
   }
   function renderXAxisCombined() {
+    // console.log('tick x axis combined:', xScale.ticks().length)
     xAxis
       .call(
         axisTop(xScale)
           .tickSize(-coreChartHeightCombined)
-          .tickFormat(
-            val =>
-              xValuePrefix + formatNumber(val, xValueFormatter) + xValueSuffix,
-          ),
+          .tickFormat(xAxisTickFormatter)
+          .tickValues([...xScale.ticks(), ...additionalXAxisTickValues]),
       )
       .call(g => g.selectAll('.tick line').attr('stroke-opacity', 0.1))
       .call(g => g.select('.domain').remove())
@@ -409,7 +419,9 @@ export function renderChart({
       .attr('class', 'c')
       .attr('r', d => sizeScale(d[sizeField]))
       .style('fill', function (d) {
-        return xColorScale(d[xField])
+        return d[xField] > max(xDomain) || d[xField] < min(xDomain)
+          ? xOutsideDomainColor
+          : xColorScale(d[xField])
       })
       // .attr('stroke', function (d) {
       //   return rgb(xColorScale(d[xField])).darker(0.5)
@@ -422,34 +434,16 @@ export function renderChart({
         return d.y
       })
       .on('mouseover', function (e, d) {
-        tooltipChild.html(
-          `<div><span>${d[nameField]}</span></div>
-         <div class="flex">
-           <div class="capitalize">${xFieldForTooltip}:</div>
-           <div class="pl-1 font-bold">${
-             xValuePrefix +
-             formatNumber(d[xFieldForTooltip], xValueFormatter) +
-             xValueSuffix
-           }</div>
-         </div>
-         <div class="flex">
-           <div class="capitalize">${sizeField}:</div>
-           <div class="pl-1 font-bold" >${
-             sizeValuePrefix +
-             formatNumber(d[sizeField], sizeValueFormatter) +
-             sizeValueSuffix
-           }</div>
-         </div>`,
-        )
-        tooltipDiv
-          .style('left', `${e.clientX}px`)
-          .style('top', `${e.clientY + window.scrollY + 30}px`)
-          .style('opacity', 1)
+        fillAndShowTooltip({ shapeNode: this, dataObj: d })
 
         select(this).classed('hovered', true)
       })
       .on('mouseout', function () {
-        // tooltipDiv.style('opacity', 0)
+        tooltipDiv
+          .style('left', '-300px')
+          .transition()
+          .duration(500)
+          .style('opacity', 0)
         select(this).classed('hovered', false)
       })
     u.exit().remove()
@@ -471,11 +465,62 @@ export function renderChart({
     if (term) {
       select('.bubbles').classed('g-searching', true)
       allBubbles.classed('c-match', d =>
-        d[nameField].toLowerCase().includes(term.toLowerCase()),
+        d[nameField].toLowerCase().startsWith(term.toLowerCase()),
       )
+      if (chartCore.selectAll('.c-match').size() === 1) {
+        // tooltipDi
+        const matchedCircle = chartCore.select('.c-match')
+
+        fillAndShowTooltip({
+          shapeNode: matchedCircle.node(),
+          dataObj: matchedCircle.data()[0],
+        })
+      }
     } else {
       select('.bubbles').classed('g-searching', false)
+      tooltipDiv
+        .style('left', '-300px')
+        .transition()
+        .duration(500)
+        .style('opacity', 0)
     }
+  }
+
+  function fillAndShowTooltip({ shapeNode, dataObj }) {
+    tooltipChild.html(
+      `<div class="font-bold mb-1">${dataObj[nameField]}</div>
+         <div class="flex">
+           <div class="capitalize">${xFieldForTooltip}:</div>
+           <div class="pl-1 font-bold">${
+             xValuePrefix +
+             formatNumber(dataObj[xFieldForTooltip], xValueFormatter) +
+             xValueSuffix
+           }</div>
+         </div>
+         <div class="flex">
+           <div class="capitalize">${sizeField}:</div>
+           <div class="pl-1 font-bold" >${
+             sizeValuePrefix +
+             formatNumber(dataObj[sizeField], sizeValueFormatter) +
+             sizeValueSuffix
+           }</div>
+         </div>`,
+    )
+    const {
+      x: circleX,
+      y: circleY,
+      width: circleWidth,
+    } = shapeNode.getBoundingClientRect()
+    const { width: tooltipWidth, height: tooltipHeight } = tooltipDiv
+      .node()
+      .getBoundingClientRect()
+
+    tooltipDiv
+      .style('left', `${circleX - tooltipWidth / 2 + circleWidth / 2}px`)
+      .style('top', `${circleY - tooltipHeight - 6 - 2 + window.scrollY}px`)
+      .transition()
+      .duration(5)
+      .style('opacity', 1)
   }
 
   search.on('keyup', e => {

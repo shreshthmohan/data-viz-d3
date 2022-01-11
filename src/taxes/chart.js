@@ -1,6 +1,19 @@
-import { tsv, schemePuOr } from 'd3'
+import { tsv, schemePuOr, format } from 'd3'
 import { renderChart } from './render'
 import { processCorporateTaxData } from './processCorporateTaxData'
+
+const xAxisTickFormatter = val => {
+  // if 65 na
+  // greater than 60 >=60%
+  // else simple format
+  if (val === 0.65) {
+    return 'N.A.'
+  } else if (val >= 0.6) {
+    return '≥60%'
+  }
+
+  return format('.0%')(val)
+}
 
 const options = {
   aspectRatioSplit: 1.2,
@@ -25,6 +38,8 @@ const options = {
   xValueFormatter: '.0%',
   // xValueSuffix: '%',
   reduceXTickByFactor: 2,
+  additionalXAxisTickValues: [0.65], // note faux tax rate for NA is 65
+  xAxisTickFormatter,
 
   sizeRange: [0, 20],
   sizeValuePrefix: '$',
