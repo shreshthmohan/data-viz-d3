@@ -2,3 +2,5 @@
 - But we shall, at least, initially run a force simulation on the client to show the circle postions
 - (~) Maybe, we can later add a way to pre-calculate positions using a worker?
 - Some companies in the data are now defunct (or not in the S&P 500 anymore), would be interesting to do a "death by tax" analysis of these. One example is Computer Sciences Corporation.
+- Callout with triangle and shadow: https://play.tailwindcss.com/wqeXQCw1AC
+- For tooltip on exactly single search match

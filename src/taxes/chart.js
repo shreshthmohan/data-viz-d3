@@ -1,30 +1,32 @@
-import { csv } from 'd3'
+import { tsv, schemePuOr } from 'd3'
 import { renderChart } from './render'
+import { processCorporateTaxData } from './processCorporateTaxData'
 
 const options = {
-  aspectRatioSplit: 2,
-  aspectRatioCombined: 8,
+  aspectRatioSplit: 1.2,
+  aspectRatioCombined: 3.7,
+  // compressX: 1.2,
 
   marginTop: 0,
   marginRight: 0,
   marginBottom: 0,
   marginLeft: 0,
 
-  bgColor: '#fafafa',
+  // bgColor: '#fafafa',
 
   // customColorScheme: ['red', 'blue', 'green', 'black', 'gray'],
-  inbuiltScheme: 'schemeOrRd',
-  numberOfColors: 5, // minumum: 3, maximum: 9
+  colorScheme: schemePuOr[6],
 
   collisionDistance: 0.5,
 
-  xDomainCustom: [0, 45],
-  xAxisLabel: 'x-axis label',
-  xValuePrefix: '',
-  xValueFormatter: '.1f',
-  xValueSuffix: '%',
+  xDomainCustom: [0, 0.6],
+  xAxisLabel: 'Effective tax rate (2007-2012)',
+  // xValuePrefix: '',
+  xValueFormatter: '.0%',
+  // xValueSuffix: '%',
+  reduceXTickByFactor: 2,
 
-  sizeRange: [2, 15],
+  sizeRange: [0, 20],
   sizeValuePrefix: '$',
   sizeValueFormatter: ',',
   sizeValueSuffix: '',
@@ -34,28 +36,33 @@ const options = {
 
   colorLegendTitle: 'Color Legend Label',
 
-  combinedSegmentLabel: 'Combined Segment Label',
+  combinedSegmentLabel: 'S&P 500 Companies',
   segmentType: 'Segment Type', // use this if it's the same for both split and combined modes
-  segmentTypeCombined: 'Segment Type (combined)',
-  segmentTypeSplit: 'Segment Type (split)',
+  segmentTypeCombined: '',
+  segmentTypeSplit: '',
 
-  splitButtonClassNames:
-    'px-2 py-1 border border-transparent text-xs font-medium rounded-sm shadow-sm text-white bg-gray-600 hover:bg-gray-700 disabled:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:cursor-not-allowed',
-  combinedButtonClassNames:
-    'px-2 py-1 border border-transparent text-xs font-medium rounded-sm shadow-sm text-white bg-gray-600 hover:bg-gray-700 disabled:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:cursor-not-allowed',
+  splitButtonClassNames: `text-sm bg-gray-100 rounded-sm px-1.5 py-0.5 border border-gray-400
+    hover:bg-gray-200 disabled:bg-gray-200 disabled:border-gray-400 disabled:text-gray-400
+    disabled:cursor-not-allowed`,
+  combinedButtonClassNames: `text-sm bg-gray-100 rounded-sm px-1.5 py-0.5 border border-gray-400
+    hover:bg-gray-200 disabled:bg-gray-200 disabled:border-gray-400 disabled:text-gray-400
+    disabled:cursor-not-allowed`,
   searchInputClassNames:
-    'focus:ring-gray-500 focus:border-gray-500 text-xs border border-gray-300 rounded-sm px-2 py-1 shadow-inner',
+    'focus:ring-gray-500 focus:border-gray-500 text-sm border border-gray-300 rounded-sm px-1.5 py-0.5 shadow-inner',
 }
 
 const dimensions = {
   sizeField: 'capitalization',
-  xField: 'taxRate',
-  nameField: 'name',
+  xField: 'fauxTaxRate',
+  xFieldForTooltip: 'Effective tax rate',
+  nameField: 'company',
   segmentField: 'sector',
 }
-const dataPath = 'data.csv'
+const dataPath = 'companies.tsv'
 
-csv(dataPath).then(data => {
+tsv(dataPath).then(rawData => {
+  const data = processCorporateTaxData(rawData)
+
   renderChart({
     chartContainerSelector: '#chart-container',
     data,

@@ -9,7 +9,6 @@ import {
   axisTop,
   scaleBand,
   axisLeft,
-  rgb,
   forceSimulation,
   forceManyBody,
   forceX,
@@ -28,10 +27,12 @@ export function renderChart({
     xField,
     nameField, // also search field
     segmentField,
+    xFieldForTooltip = xField,
   },
   options: {
     aspectRatioCombined = 5,
     aspectRatioSplit = 0.8,
+    compressX = 1,
 
     marginTop = 60,
     marginRight = 90,
@@ -52,6 +53,7 @@ export function renderChart({
     xValuePrefix = '',
     xValueFormatter = '',
     xValueSuffix = '',
+    reduceXTickByFactor = 1,
 
     /* sizeField */
     sizeRange = [2, 20],
@@ -63,6 +65,7 @@ export function renderChart({
     sizeLegendGapInCircles = 30,
 
     colorLegendTitle = xField,
+    colorLegendWidth = 260,
 
     combinedSegmentLabel = 'All',
     segmentType = segmentField,
@@ -81,12 +84,16 @@ export function renderChart({
       stroke-width: 2;
       stroke: #333;
     }
-    circle.hovered {
+    circle.c {
+      stroke-width: 0.5;
+      stroke: #000;
+    }
+    circle.c.hovered {
       stroke-width: 2;
       stroke: #333;
     }
   `)
-  const coreChartWidth = 1000
+  const coreChartWidth = 700
 
   const coreChartHeightCombined = coreChartWidth / aspectRatioCombined
   const coreChartHeightSplit = coreChartWidth / aspectRatioSplit
@@ -125,11 +132,29 @@ export function renderChart({
 
   const tooltipDiv = select('body')
     .append('div')
-    .attr('class', 'dom-tooltip')
-    .attr(
-      'style',
-      'opacity: 0; position: absolute;  background-color: white; border-radius: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; line-height: 1rem; border-width: 1px;',
-    )
+    .attr('class', `dom-tooltip absolute`)
+    .attr('style', 'opacity: 0;')
+
+  // Warning: trying to parameterize values like color or
+  // border width in Tailwind will fail. Because of how JIT mode
+  // scans files. It can't read through interpolation!
+  // bg-${white} or border-[${6}px] won't work
+  const tooltipChild = tooltipDiv.append('div').attr(
+    'class',
+    `
+    bg-white border border-slate-500 rounded px-2 py-1 text-xs
+
+    after:absolute after:border-[6px] after:border-transparent
+    after:border-b-slate-500 after:-top-[calc(2*6px)]
+    after:z-10 after:left-[calc(50%-6px)]
+
+    before:absolute before:border-[5px] before:border-transparent
+    before:left-[calc(50%-5px)] before:border-b-white 
+    before:-top-[calc(2*5px)] before:z-20
+   
+    drop-shadow-md
+    `,
+  )
 
   const parsedData = data.map(d => ({
     ...d,
@@ -140,13 +165,13 @@ export function renderChart({
   // const splitButton = select('#split-bubbles')
   const splitButton = widgetsLeft
     .append('button')
-    .text('Split')
+    .text('View by Industry')
     .attr('class', splitButtonClassNames)
 
   // const combinedButton = select('#combine-bubbles')
   const combinedButton = widgetsLeft
     .append('button')
-    .text('Combine')
+    .text('Overall')
     .attr('class', combinedButtonClassNames)
 
   let allowSplit = false
@@ -181,7 +206,10 @@ export function renderChart({
   const segments = [...new Set(parsedData.map(c => c[segmentField]))]
   const maxSizeValue = Math.max(...parsedData.map(c => c[sizeField]))
 
-  const sizeScale = scaleSqrt().range(sizeRange).domain([0, maxSizeValue])
+  const sizeRangeXCompressed = sizeRange.map(s => s * compressX)
+  const sizeScale = scaleSqrt()
+    .range(sizeRangeXCompressed)
+    .domain([0, maxSizeValue])
 
   const yScale = scalePoint()
     .domain(segments)
@@ -202,10 +230,16 @@ export function renderChart({
 
   widgetsRight
     .append('svg')
-    .attr('width', 260)
+    .attr('width', colorLegendWidth)
     .attr('height', 45)
     .append(() =>
-      colorLegend({ color: xColorScale, title: colorLegendTitle, width: 260 }),
+      colorLegend({
+        color: xColorScale,
+        title: colorLegendTitle,
+        width: colorLegendWidth,
+        height: 48,
+        tickFormat: xValueFormatter,
+      }),
     )
 
   // Size Legend
@@ -280,7 +314,7 @@ export function renderChart({
     .append('g')
     .attr('transform', `translate(${coreChartWidth / 2}, ${-20})`)
     .append('text')
-    .attr('class', 'text-xs font-semibold tracking-wider')
+    .attr('class', 'text-xs font-semibold')
     .text(xAxisLabel)
     .attr('text-anchor', 'middle')
 
@@ -294,7 +328,8 @@ export function renderChart({
           .tickFormat(
             val =>
               xValuePrefix + formatNumber(val, xValueFormatter) + xValueSuffix,
-          ),
+          )
+          .ticks(xScale.ticks().length / reduceXTickByFactor),
       )
       .call(g => g.selectAll('.tick line').attr('stroke-opacity', 0.1))
       .call(g => g.select('.domain').remove())
@@ -332,7 +367,7 @@ export function renderChart({
         g.selectAll('.tick line').attr('stroke-opacity', 0.1)
         g.selectAll('.tick text')
           .attr('transform', 'translate(-20,0)')
-          .classed('text-xs', true)
+          .classed('text-xs font-bold', true)
       })
       .attr('opacity', 0)
       .transition()
@@ -371,13 +406,14 @@ export function renderChart({
     allBubbles = u
       .enter()
       .append('circle')
+      .attr('class', 'c')
       .attr('r', d => sizeScale(d[sizeField]))
       .style('fill', function (d) {
         return xColorScale(d[xField])
       })
-      .attr('stroke', function (d) {
-        return rgb(xColorScale(d[xField])).darker(0.5)
-      })
+      // .attr('stroke', function (d) {
+      //   return rgb(xColorScale(d[xField])).darker(0.5)
+      // })
       .merge(u)
       .attr('cx', function (d) {
         return d.x
@@ -386,20 +422,19 @@ export function renderChart({
         return d.y
       })
       .on('mouseover', function (e, d) {
-        tooltipDiv.transition().duration(200).style('opacity', 1)
-        tooltipDiv.html(
-          `<div><span>${d[nameField]}</span>(${d[segmentField]})</div>
-         <div style="display: flex">
-           <div style="text-transform: capitalize">${xField}:</div>
-           <div style="padding-left: 0.25rem; font-weight: bold">${
+        tooltipChild.html(
+          `<div><span>${d[nameField]}</span></div>
+         <div class="flex">
+           <div class="capitalize">${xFieldForTooltip}:</div>
+           <div class="pl-1 font-bold">${
              xValuePrefix +
-             formatNumber(d[xField], xValueFormatter) +
+             formatNumber(d[xFieldForTooltip], xValueFormatter) +
              xValueSuffix
            }</div>
          </div>
-         <div style="display: flex">
-           <div style="text-transform: capitalize">${sizeField}:</div>
-           <div style="padding-left: 0.25rem; font-weight: bold">${
+         <div class="flex">
+           <div class="capitalize">${sizeField}:</div>
+           <div class="pl-1 font-bold" >${
              sizeValuePrefix +
              formatNumber(d[sizeField], sizeValueFormatter) +
              sizeValueSuffix
@@ -409,10 +444,12 @@ export function renderChart({
         tooltipDiv
           .style('left', `${e.clientX}px`)
           .style('top', `${e.clientY + window.scrollY + 30}px`)
+          .style('opacity', 1)
+
         select(this).classed('hovered', true)
       })
       .on('mouseout', function () {
-        tooltipDiv.transition().duration(500).style('opacity', 0)
+        // tooltipDiv.style('opacity', 0)
         select(this).classed('hovered', false)
       })
     u.exit().remove()
@@ -428,7 +465,7 @@ export function renderChart({
     .attr('type', 'text')
     .attr('class', searchInputClassNames)
 
-  search.attr('placeholder', `Find by ${nameField}`)
+  search.attr('placeholder', `Find a ${nameField}`)
 
   function searchBy(term) {
     if (term) {
@@ -519,9 +556,10 @@ export function renderChart({
       )
       .force(
         'y',
-        forceY().y(0),
-        // combine Y strength
-        // .strength(1)
+        forceY()
+          .y(0)
+          // combine Y strength
+          .strength(0.3),
       )
       .force(
         'collision',
