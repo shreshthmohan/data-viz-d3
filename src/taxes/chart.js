@@ -41,11 +41,11 @@ const options = {
   segmentTypeCombined: '',
   segmentTypeSplit: '',
 
-  splitButtonClassNames: `text-sm bg-gray-100 rounded-sm px-1.5 py-0.5 border border-gray-400
-    hover:bg-gray-200 disabled:bg-gray-200 disabled:border-gray-400 disabled:text-gray-400
+  splitButtonClassNames: `text-sm text-gray-900 bg-gray-100 rounded-sm px-1.5 py-0.5 border border-gray-400
+    hover:bg-gray-200 disabled:bg-gray-200 disabled:border-gray-300 disabled:text-gray-400
     disabled:cursor-not-allowed`,
-  combinedButtonClassNames: `text-sm bg-gray-100 rounded-sm px-1.5 py-0.5 border border-gray-400
-    hover:bg-gray-200 disabled:bg-gray-200 disabled:border-gray-400 disabled:text-gray-400
+  combinedButtonClassNames: `text-sm text-gray-900 bg-gray-100 rounded-sm px-1.5 py-0.5 border border-gray-400
+    hover:bg-gray-200 disabled:bg-gray-200 disabled:border-gray-300 disabled:text-gray-400
     disabled:cursor-not-allowed`,
   searchInputClassNames:
     'focus:ring-gray-500 focus:border-gray-500 text-sm border border-gray-300 rounded-sm px-1.5 py-0.5 shadow-inner',
