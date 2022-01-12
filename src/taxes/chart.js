@@ -16,7 +16,7 @@ const xAxisTickFormatter = val => {
 }
 
 const options = {
-  aspectRatioSplit: 1.2,
+  aspectRatioSplit: 0.9,
   aspectRatioCombined: 3.7,
   // compressX: 1.2,
 
@@ -41,15 +41,17 @@ const options = {
   additionalXAxisTickValues: [0.65], // note faux tax rate for NA is 65
   xAxisTickFormatter,
 
+  xOutsideDomainColor: 'gray',
+
   sizeRange: [0, 20],
-  sizeValuePrefix: '$',
-  sizeValueFormatter: ',',
+  sizeValuePrefix: '',
+  sizeValueFormatter: '$.3s',
   sizeValueSuffix: '',
-  sizeLegendValues: [10e3, 50e3, 10e4, 25e4],
-  sizeLegendTitle: 'Size Legend Title',
+  sizeLegendValues: [1e9, 10e9, 50e9, 250e9],
+  sizeLegendTitle: 'Market capitalization',
   sizeLegendGapInCircles: 45,
 
-  colorLegendTitle: 'Color Legend Label',
+  colorLegendTitle: 'Effective tax rate',
 
   combinedSegmentLabel: 'S&P 500 Companies',
   segmentType: 'Segment Type', // use this if it's the same for both split and combined modes
@@ -70,6 +72,7 @@ const dimensions = {
   sizeField: 'capitalization',
   xField: 'fauxTaxRate',
   xFieldForTooltip: 'Effective tax rate',
+  extraFieldsForTooltip: ['taxes', 'earnings'],
   nameField: 'company',
   segmentField: 'sector',
 }

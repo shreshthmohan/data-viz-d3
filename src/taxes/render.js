@@ -30,6 +30,7 @@ export function renderChart({
     nameField, // also search field
     segmentField,
     xFieldForTooltip = xField,
+    extraFieldsForTooltip = [sizeField],
   },
   options: {
     aspectRatioCombined = 5,
@@ -148,7 +149,7 @@ export function renderChart({
   const tooltipChild = tooltipDiv.append('div').attr(
     'class',
     `
-    bg-white border border-slate-500 rounded px-2 py-1 text-xs
+    w-48 bg-white border border-slate-500 rounded px-2 py-1 text-xs
 
     after:absolute after:border-[6px] after:border-transparent
     after:border-t-slate-500 after:-bottom-[calc(2*6px)]
@@ -441,6 +442,7 @@ export function renderChart({
       .on('mouseout', function () {
         tooltipDiv
           .style('left', '-300px')
+          .style('top', '-300px')
           .transition()
           .duration(500)
           .style('opacity', 0)
@@ -480,6 +482,7 @@ export function renderChart({
       select('.bubbles').classed('g-searching', false)
       tooltipDiv
         .style('left', '-300px')
+        .style('top', '-300px')
         .transition()
         .duration(500)
         .style('opacity', 0)
@@ -488,23 +491,30 @@ export function renderChart({
 
   function fillAndShowTooltip({ shapeNode, dataObj }) {
     tooltipChild.html(
-      `<div class="font-bold mb-1">${dataObj[nameField]}</div>
-         <div class="flex">
-           <div class="capitalize">${xFieldForTooltip}:</div>
+      `<div class="font-bold mb-1.5 overflow-hidden text-ellipsis whitespace-nowrap">${
+        dataObj[nameField]
+      }</div>
+         <div class="flex justify-between mb-0.5">
+           <div class="capitalize">${xFieldForTooltip}</div>
            <div class="pl-1 font-bold">${
              xValuePrefix +
              formatNumber(dataObj[xFieldForTooltip], xValueFormatter) +
              xValueSuffix
            }</div>
          </div>
-         <div class="flex">
-           <div class="capitalize">${sizeField}:</div>
+         ${extraFieldsForTooltip
+           .map(
+             ef => `
+         <div class="flex justify-between mb-0.5">
+           <div class="capitalize">${ef}</div>
            <div class="pl-1 font-bold" >${
              sizeValuePrefix +
-             formatNumber(dataObj[sizeField], sizeValueFormatter) +
+             formatNumber(dataObj[ef], sizeValueFormatter) +
              sizeValueSuffix
            }</div>
          </div>`,
+           )
+           .join('')}`,
     )
     const {
       x: circleX,
@@ -517,7 +527,7 @@ export function renderChart({
 
     tooltipDiv
       .style('left', `${circleX - tooltipWidth / 2 + circleWidth / 2}px`)
-      .style('top', `${circleY - tooltipHeight - 6 - 2 + window.scrollY}px`)
+      .style('top', `${circleY - tooltipHeight - 6 - 1 + window.scrollY}px`)
       .transition()
       .duration(5)
       .style('opacity', 1)
