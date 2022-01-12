@@ -1,10 +1,11 @@
 module.exports = {
   content: ['./src/**/*.{html,js}'],
-  corePlugins: {
-    preflight: false,
-  },
+  // Had to turn this off to make tooltip tirangle work! :(
+  // corePlugins: {
+  //   preflight: false,
+  // },
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/typography')],
 }

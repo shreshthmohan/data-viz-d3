@@ -13,15 +13,15 @@ export default [
     ],
     plugins: [resolve(), terser()],
   },
-  // {
-  //   input: './src/fan1/chart.js',
-  //   output: [
-  //     {
-  //       file: './dist/fan1/chart.js',
-  //       format: 'umd',
-  //       name: 'fan1', // use this global var when using in the browser
-  //     },
-  //   ],
-  //   plugins: [resolve(), terser()],
-  // },
+  {
+    input: './src/taxes/chart.js',
+    output: [
+      {
+        file: './dist/taxes/chart.js',
+        format: 'umd',
+        name: 'taxes', // use this global var when using in the browser
+      },
+    ],
+    plugins: [resolve(), terser()],
+  },
 ]
