@@ -526,7 +526,10 @@ export function renderChart({
       .getBoundingClientRect()
 
     tooltipDiv
-      .style('left', `${circleX - tooltipWidth / 2 + circleWidth / 2}px`)
+      .style(
+        'left',
+        `${circleX - tooltipWidth / 2 + circleWidth / 2 + window.scrollX}px`,
+      )
       .style('top', `${circleY - tooltipHeight - 6 - 1 + window.scrollY}px`)
       .transition()
       .duration(5)
