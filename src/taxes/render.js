@@ -149,7 +149,7 @@ export function renderChart({
   const tooltipChild = tooltipDiv.append('div').attr(
     'class',
     `
-    w-48 bg-white border border-slate-500 rounded px-2 py-1 text-xs
+    w-48 bg-white border-solid border border-slate-500 rounded px-2 py-1 text-xs
 
     after:absolute after:border-[6px] after:border-transparent
     after:border-t-slate-500 after:-bottom-[calc(2*6px)]
@@ -424,9 +424,6 @@ export function renderChart({
           ? xOutsideDomainColor
           : xColorScale(d[xField])
       })
-      // .attr('stroke', function (d) {
-      //   return rgb(xColorScale(d[xField])).darker(0.5)
-      // })
       .merge(u)
       .attr('cx', function (d) {
         return d.x

@@ -57,15 +57,6 @@ const options = {
   segmentType: 'Segment Type', // use this if it's the same for both split and combined modes
   segmentTypeCombined: '',
   segmentTypeSplit: '',
-
-  splitButtonClassNames: `text-sm text-gray-900 bg-gray-100 rounded-sm px-1.5 py-0.5 border border-gray-400
-    hover:bg-gray-200 disabled:bg-gray-200 disabled:border-gray-300 disabled:text-gray-400
-    disabled:cursor-not-allowed`,
-  combinedButtonClassNames: `text-sm text-gray-900 bg-gray-100 rounded-sm px-1.5 py-0.5 border border-gray-400
-    hover:bg-gray-200 disabled:bg-gray-200 disabled:border-gray-300 disabled:text-gray-400
-    disabled:cursor-not-allowed`,
-  searchInputClassNames:
-    'focus:ring-gray-500 focus:border-gray-500 text-sm border border-gray-300 rounded-sm px-1.5 py-0.5 shadow-inner',
 }
 
 const dimensions = {
