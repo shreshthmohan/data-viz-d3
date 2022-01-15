@@ -1,3 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans;
+  }
+
+  /* to make triangle thing in tooltip work */
+  /* 1. --tw-content variable wasn't defined */
+  /* 2. that border-style was none */
+  ::before,
+  ::after {
+    --tw-content: ''; /* 1 */
+    border-style: solid; /* 2 */
+  }
+}
