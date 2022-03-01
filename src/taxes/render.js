@@ -445,7 +445,6 @@ export function renderChart({
       .attr('cy', function (d) {
         return d.y
       })
-      .on('mouseout', function () {})
     u.exit().remove()
     preventOverflowThrottled({
       allComponents,
@@ -477,10 +476,7 @@ export function renderChart({
       }
     } else {
       select('.bubbles').classed('g-searching', false)
-      tooltipDiv
-        .style('left', '-300px')
-        .style('top', '-300px')
-        .style('display', 'none')
+      tooltipDiv.style('display', 'none')
     }
   }
 
@@ -663,7 +659,8 @@ export function renderChart({
             .append('path')
             .attr('id', `v-${i}`)
             .attr('d', voronoi.renderCell(i))
-            .attr('fill', '#0007')
+            .attr('fill', '#21291f4d')
+            .attr('stroke', '#00000080')
             .attr('clip-path', () => `url(#clip-${i})`)
             .on('mouseover', () => {
               const selectCircle = select(`#c-${i}`)
