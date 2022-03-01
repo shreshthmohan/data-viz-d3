@@ -24,4 +24,15 @@ export default [
     ],
     plugins: [resolve(), terser()],
   },
+  {
+    input: './src/happiness/chart.js',
+    output: [
+      {
+        file: './dist/happiness/chart.js',
+        format: 'umd',
+        name: 'happiness', // use this global var when using in the browser
+      },
+    ],
+    plugins: [resolve(), terser()],
+  },
 ]
