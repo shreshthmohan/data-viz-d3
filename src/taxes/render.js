@@ -140,7 +140,7 @@ export function renderChart({
   const tooltipDiv = select('body')
     .append('div')
     .attr('class', `dom-tooltip absolute`)
-    .attr('style', 'opacity: 0;')
+    .style('display', 'none')
 
   // Warning: trying to parameterize values like color or
   // border width in Tailwind will fail. Because of how JIT mode
@@ -372,6 +372,7 @@ export function renderChart({
     chartCore
       .append('g')
       .attr('id', 'y-axis-split')
+      .style('pointer-events', 'none')
       .call(axisLeft(yScale).tickSize(-coreChartWidth))
       .call(g => g.select('.domain').remove())
       .call(g => {
@@ -437,12 +438,8 @@ export function renderChart({
         select(this).classed('hovered', true)
       })
       .on('mouseout', function () {
-        tooltipDiv
-          .style('left', '-300px')
-          .style('top', '-300px')
-          .transition()
-          .duration(500)
-          .style('opacity', 0)
+        tooltipDiv.style('display', 'none')
+
         select(this).classed('hovered', false)
       })
     u.exit().remove()
@@ -477,16 +474,12 @@ export function renderChart({
       }
     } else {
       select('.bubbles').classed('g-searching', false)
-      tooltipDiv
-        .style('left', '-300px')
-        .style('top', '-300px')
-        .transition()
-        .duration(500)
-        .style('opacity', 0)
+      tooltipDiv.style('display', 'none')
     }
   }
 
   function fillAndShowTooltip({ shapeNode, dataObj }) {
+    tooltipDiv.style('display', null)
     tooltipChild.html(
       `<div class="font-bold mb-1.5 overflow-hidden text-ellipsis whitespace-nowrap">${
         dataObj[nameField]
@@ -528,9 +521,6 @@ export function renderChart({
         `${circleX - tooltipWidth / 2 + circleWidth / 2 + window.scrollX}px`,
       )
       .style('top', `${circleY - tooltipHeight - 6 - 1 + window.scrollY}px`)
-      .transition()
-      .duration(5)
-      .style('opacity', 1)
   }
 
   search.on('keyup', e => {
