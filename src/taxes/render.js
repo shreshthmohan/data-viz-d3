@@ -141,15 +141,19 @@ export function renderChart({
   const tooltipDiv = select('body')
     .append('div')
     .attr('class', `dom-tooltip absolute`)
-    .attr('style', 'opacity: 0;')
+    .style('display', 'none')
+    .style('pointer-events', 'none')
 
   // Warning: trying to parameterize values like color or
   // border width in Tailwind will fail. Because of how JIT mode
   // scans files. It can't read through interpolation!
   // bg-${white} or border-[${6}px] won't work
-  const tooltipChild = tooltipDiv.append('div').attr(
-    'class',
-    `
+  const tooltipChild = tooltipDiv
+    .append('div')
+    .style('pointer-events', 'none')
+    .attr(
+      'class',
+      `
     w-48 bg-white border-solid border border-slate-500 rounded px-2 py-1 text-xs
 
     after:absolute after:border-[6px] after:border-transparent
@@ -162,7 +166,7 @@ export function renderChart({
    
     drop-shadow-md
     `,
-  )
+    )
 
   const parsedData = data.map(d => ({
     ...d,
@@ -326,7 +330,10 @@ export function renderChart({
     .text(xAxisLabel)
     .attr('text-anchor', 'middle')
 
-  const xAxis = chartCore.append('g').attr('id', 'x-axis')
+  const xAxis = chartCore
+    .append('g')
+    .attr('id', 'x-axis')
+    .style('pointer-events', 'none')
 
   // console.log(xScale.ticks().length / reduceXTickByFactor)
 
@@ -373,6 +380,7 @@ export function renderChart({
     chartCore
       .append('g')
       .attr('id', 'y-axis-split')
+      .style('pointer-events', 'none')
       .call(axisLeft(yScale).tickSize(-coreChartWidth))
       .call(g => g.select('.domain').remove())
       .call(g => {
@@ -396,6 +404,7 @@ export function renderChart({
     chartCore
       .append('g')
       .attr('id', 'y-axis-combined')
+      .style('pointer-events', 'none')
       .call(axisLeft(yScaleCombined).tickSize(-coreChartWidth))
       .call(g => g.select('.domain').remove())
       .call(g => {
@@ -410,7 +419,10 @@ export function renderChart({
       .attr('opacity', 1)
   }
 
-  const bubbles = chartCore.append('g').attr('class', 'bubbles')
+  const bubbles = chartCore
+    .append('g')
+    .attr('class', 'bubbles')
+    .style('pointer-event', 'none')
 
   let allBubbles
   function ticked() {
@@ -420,6 +432,7 @@ export function renderChart({
       .append('circle')
       .attr('class', 'c')
       .attr('r', d => sizeScale(d[sizeField]))
+      .attr('id', (d, i) => `c-${i}`)
       .style('fill', function (d) {
         return d[xField] > max(xDomain) || d[xField] < min(xDomain)
           ? xOutsideDomainColor
@@ -432,20 +445,7 @@ export function renderChart({
       .attr('cy', function (d) {
         return d.y
       })
-      .on('mouseover', function (e, d) {
-        fillAndShowTooltip({ shapeNode: this, dataObj: d })
-
-        select(this).classed('hovered', true)
-      })
-      .on('mouseout', function () {
-        tooltipDiv
-          .style('left', '-300px')
-          .style('top', '-300px')
-          .transition()
-          .duration(500)
-          .style('opacity', 0)
-        select(this).classed('hovered', false)
-      })
+      .on('mouseout', function () {})
     u.exit().remove()
     preventOverflowThrottled({
       allComponents,
@@ -468,7 +468,6 @@ export function renderChart({
         d[nameField].toLowerCase().startsWith(term.toLowerCase()),
       )
       if (chartCore.selectAll('.c-match').size() === 1) {
-        // tooltipDi
         const matchedCircle = chartCore.select('.c-match')
 
         fillAndShowTooltip({
@@ -481,13 +480,12 @@ export function renderChart({
       tooltipDiv
         .style('left', '-300px')
         .style('top', '-300px')
-        .transition()
-        .duration(500)
-        .style('opacity', 0)
+        .style('display', 'none')
     }
   }
 
   function fillAndShowTooltip({ shapeNode, dataObj }) {
+    tooltipDiv.style('display', null)
     tooltipChild.html(
       `<div class="font-bold mb-1.5 overflow-hidden text-ellipsis whitespace-nowrap">${
         dataObj[nameField]
@@ -529,9 +527,6 @@ export function renderChart({
         `${circleX - tooltipWidth / 2 + circleWidth / 2 + window.scrollX}px`,
       )
       .style('top', `${circleY - tooltipHeight - 6 - 1 + window.scrollY}px`)
-      .transition()
-      .duration(5)
-      .style('opacity', 1)
   }
 
   search.on('keyup', e => {
@@ -631,19 +626,11 @@ export function renderChart({
 
         chartCore.select('#combined-dots').remove()
 
-        const combinedDots = chartCore
+        const voronoiContainer = chartCore
           .append('g')
-          .attr('id', 'combined-dots')
+          .attr('id', 'voronoi-container')
+          .style('pointer-events', 'all')
           .attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
-
-        combinedDots
-          .selectAll('circle')
-          .data(combinedSimEndData)
-          .join('circle')
-          .attr('cx', d => d.x)
-          .attr('cy', d => d.y)
-          .attr('r', 1)
-          .attr('fill', 'black')
 
         const delaunay = Delaunay.from(
           combinedSimEndData,
@@ -651,13 +638,49 @@ export function renderChart({
           d => d.y,
         )
 
-        const voronoi = delaunay.voronoi([0, -500, 1000, 500])
+        // TODO: extend bounds to capture overflow and N/A circles
+        const voronoi = delaunay.voronoi([
+          0, // xMin
+          -coreChartHeightCombined / 2, // yMin
+          coreChartWidth, // xMax
+          coreChartHeightCombined / 2, // yMax
+        ])
 
-        select('#combined-dots')
-          .append('path')
-          .attr('d', voronoi.render())
-          .attr('fill', '#eeeeeecc')
-          .attr('stroke', 'black')
+        voronoiContainer
+          .append('defs')
+          .selectAll('clipPath')
+          .data(combinedSimEndData)
+          .enter()
+          .append('clipPath')
+          .attr('id', (d, i) => `clip-${i}`)
+          .append('circle')
+          .attr('cx', d => d.x)
+          .attr('cy', d => d.y)
+          .attr('r', d => sizeScale(d[sizeField]) + 20)
+
+        for (let i = 0; i < combinedSimEndData.length; i++) {
+          voronoiContainer
+            .append('path')
+            .attr('id', `v-${i}`)
+            .attr('d', voronoi.renderCell(i))
+            .attr('fill', '#0007')
+            .attr('clip-path', () => `url(#clip-${i})`)
+            .on('mouseover', () => {
+              const selectCircle = select(`#c-${i}`)
+              const d = selectCircle.data()
+
+              fillAndShowTooltip({
+                shapeNode: selectCircle.node(),
+                dataObj: d[0],
+              })
+
+              selectCircle.classed('hovered', true)
+            })
+            .on('mouseout', () => {
+              tooltipDiv.style('display', 'none')
+              select(`#c-${i}`).classed('hovered', false)
+            })
+        }
 
         allowSplit = true
         manageSplitCombine()

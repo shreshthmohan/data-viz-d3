@@ -5,3 +5,5 @@
 - Callout with triangle and shadow: https://play.tailwindcss.com/wqeXQCw1AC
 - For tooltip on exactly single search match
 - [Data file](https://static01.nyt.com/newsgraphics/2013/05/13/corporate-taxes/ee84b0191a75f5c652087293ab0efd4710e21f94/companies.tsv)
+- Voronoi for better ineraction space
+- Pointer events: none for elements which we don't wish to trigger interaction for
