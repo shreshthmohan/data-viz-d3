@@ -1,4 +1,5 @@
 /* global window */
+import { Delaunay } from 'd3-delaunay'
 import {
   select,
   scaleSqrt,
@@ -625,6 +626,39 @@ export function renderChart({
       .on('tick', ticked)
       .on('end', () => {
         window.console.log('combined force simulation ended')
+
+        const combinedSimEndData = bubbles.selectAll('circle').data()
+
+        chartCore.select('#combined-dots').remove()
+
+        const combinedDots = chartCore
+          .append('g')
+          .attr('id', 'combined-dots')
+          .attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
+
+        combinedDots
+          .selectAll('circle')
+          .data(combinedSimEndData)
+          .join('circle')
+          .attr('cx', d => d.x)
+          .attr('cy', d => d.y)
+          .attr('r', 1)
+          .attr('fill', 'black')
+
+        const delaunay = Delaunay.from(
+          combinedSimEndData,
+          d => d.x,
+          d => d.y,
+        )
+
+        const voronoi = delaunay.voronoi([0, -500, 1000, 500])
+
+        select('#combined-dots')
+          .append('path')
+          .attr('d', voronoi.render())
+          .attr('fill', '#eeeeeecc')
+          .attr('stroke', 'black')
+
         allowSplit = true
         manageSplitCombine()
       })
