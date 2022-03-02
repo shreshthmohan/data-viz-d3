@@ -35,4 +35,15 @@ export default [
     ],
     plugins: [resolve(), terser()],
   },
+  {
+    input: './src/calendar/chart.js',
+    output: [
+      {
+        file: './dist/calendar/chart.js',
+        format: 'umd',
+        name: 'calendar', // use this global var when using in the browser
+      },
+    ],
+    plugins: [resolve(), terser()],
+  },
 ]
