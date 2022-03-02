@@ -455,6 +455,6 @@ function renderCalendar({
     })
     .append('text')
     .text(d => d[nameField])
-    .attr('transform', 'translate(0, -5)')
-    .attr('font-size', 14)
+    .attr('transform', 'translate(0, -2)')
+    .attr('font-size', 12)
 }
