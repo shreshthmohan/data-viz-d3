@@ -35,7 +35,7 @@ const options = {
   xAxisTickValues: [400, 1000, 3000, 8000, 25000, 60000, 160000], // comment this for automatic tick values
   xScaleType: 'log', // linear or log
   xScaleLogBase: Math.E, // applicable only if log scale (will be 10 if not provided)
-  xValueFormatter: '.2f',
+  xValueFormatter: '.3s',
 
   /* yField */
   yAxisTitle: 'Happiness',
