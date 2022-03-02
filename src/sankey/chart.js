@@ -2,7 +2,7 @@ import { csv } from 'd3'
 import { renderChart } from './render'
 
 const options = {
-  aspectRatio: 2, // decrease this value to increase height
+  aspectRatio: 1.8, // decrease this value to increase height
 
   marginTop: 0,
   marginRight: 0,
