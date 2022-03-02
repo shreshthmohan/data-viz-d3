@@ -1,3 +1,5 @@
+import { throttle } from 'lodash-es'
+
 export function preventOverflow({
   allComponents,
   svg,
@@ -22,3 +24,6 @@ export function preventOverflow({
     })`,
   )
 }
+
+// Throttled this function for use in force simulations
+export const preventOverflowThrottled = throttle(preventOverflow, 500)
