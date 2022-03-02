@@ -92,8 +92,8 @@ export function renderChart({
     coreChartHeight,
     allComponents,
     chartCore,
-    widgetsLeft,
     widgetsRight,
+    widgetsLeft,
   } = setupChartArea({
     chartContainerSelector,
     coreChartWidth,
@@ -142,11 +142,12 @@ export function renderChart({
   renderSizeLegend({
     gapInCircles,
     circleSizeScale,
-    widgetsRight,
+    parentSelection: svg,
     sizeLegendMoveSizeObjectDownBy,
     sizeLegendValues,
     sizeValueFormatter,
     sizeLegendTitle,
+    bgColor,
   })
 
   const stickHeight = 3
@@ -162,14 +163,14 @@ export function renderChart({
     ballRadius,
     gapForText,
     singleMaceSectionHeight,
-    widgetsRight,
+    widgetsLeft,
     sameDirectionColor,
     oppositeDirectionColor,
     svg,
   })
 
   renderDirectionLegend({
-    selection: widgetsRight.append('svg'),
+    selection: widgetsLeft.append('svg'),
     ballRadius,
     stickLength,
     stickWidthLegend,
@@ -218,7 +219,7 @@ export function renderChart({
   const handleSearch = searchEventHandler(nameValues)
   const search = setupSearch({
     handleSearch,
-    widgetsLeft,
+    widgetsRight,
     searchInputClassNames,
     nameField,
     nameValues,
@@ -227,7 +228,7 @@ export function renderChart({
   })
 
   setupInitialStateButton({
-    widgetsLeft,
+    widgetsRight,
     goToInitialStateButtonClassNames,
     defaultStateAll,
     search,
@@ -235,14 +236,14 @@ export function renderChart({
     svg,
   })
   setupClearAllButton({
-    widgetsLeft,
+    widgetsRight,
     clearAllButtonClassNames,
     search,
     handleSearch,
     svg,
   })
   setupShowAllButton({
-    widgetsLeft,
+    widgetsRight,
     showAllButtonClassNames,
     search,
     handleSearch,
@@ -320,10 +321,13 @@ function setupChartArea({
     )
   const widgetsLeft = widgets
     .append('div')
-    .attr('style', 'display: flex; align-items: end; column-gap: 5px;')
+    .attr(
+      'style',
+      'display: flex; flex-direction: column; align-items: start; gap: 10px;',
+    )
   const widgetsRight = widgets
     .append('div')
-    .attr('style', 'display: flex; align-items: center; column-gap: 10px;')
+    .attr('style', 'display: flex; align-items: start; column-gap: 10px;')
 
   const svg = chartParent
     .append('svg')
@@ -341,8 +345,8 @@ function setupChartArea({
     coreChartHeight,
     allComponents,
     chartCore,
-    widgetsLeft,
     widgetsRight,
+    widgetsLeft,
   }
 }
 
@@ -434,11 +438,12 @@ function setupScales({
 function renderSizeLegend({
   gapInCircles,
   circleSizeScale,
-  widgetsRight,
+  parentSelection,
   sizeLegendMoveSizeObjectDownBy,
   sizeLegendValues,
   sizeValueFormatter,
   sizeLegendTitle,
+  bgColor,
 }) {
   const sizeValues = sizeLegendValues.map(a => circleSizeScale(a))
 
@@ -454,8 +459,9 @@ function renderSizeLegend({
     cumulativeSizes.push(cumulativeSize)
   })
 
-  const sizeLegend = widgetsRight.append('svg')
-  const sizeLegendContainerGroup = sizeLegend.append('g')
+  const sizeLegendContainerGroup = parentSelection
+    .append('g')
+    .attr('transform', 'translate(0, 10)')
 
   sizeLegendContainerGroup
     .append('g')
@@ -468,7 +474,7 @@ function renderSizeLegend({
     .attr('class', 'g-size-circle')
     .append('circle')
     .attr('r', d => d)
-    .style('fill', 'transparent')
+    .style('fill', '#eee')
     .style('stroke-width', 1)
     .style('stroke', 'gray')
     .attr('cx', (d, i) => cumulativeSizes[i] + i * gapInCircles + 1)
@@ -490,10 +496,16 @@ function renderSizeLegend({
     .style('font-weight', 600)
     .text(sizeLegendTitle)
 
-  const sizeLegendBoundingBox = sizeLegendContainerGroup.node().getBBox()
-  sizeLegend
-    .attr('height', sizeLegendBoundingBox.height)
-    .attr('width', sizeLegendBoundingBox.width)
+  const { width, height } = sizeLegendContainerGroup.node().getBBox()
+
+  sizeLegendContainerGroup
+    .append('rect')
+    .attr('width', width)
+    .attr('height', height)
+    .attr('x', 0)
+    .attr('y', 0)
+    .attr('fill', bgColor)
+    .lower()
 }
 function renderXAxis({
   chartCore,
@@ -549,12 +561,12 @@ function renderColorLegend({
   ballRadius,
   gapForText,
   singleMaceSectionHeight,
-  widgetsRight,
+  widgetsLeft,
   sameDirectionColor,
   oppositeDirectionColor,
   svg,
 }) {
-  const colorLegend = widgetsRight.append('svg')
+  const colorLegend = widgetsLeft.append('svg')
   const colorLegendMain = colorLegend
     .append('g')
     .attr('class', 'color-legend cursor-pointer')
@@ -763,7 +775,7 @@ const searchEventHandler = referenceList => (qstr, svg) => {
 
 function setupSearch({
   handleSearch,
-  widgetsLeft,
+  widgetsRight,
   searchInputClassNames,
   nameField,
   svg,
@@ -773,7 +785,7 @@ function setupSearch({
   const enableSearchSuggestions = true
 
   enableSearchSuggestions &&
-    widgetsLeft
+    widgetsRight
       .append('datalist')
       .attr('role', 'datalist')
       // Assuming that chartContainerSelector will always start with #
@@ -787,7 +799,7 @@ function setupSearch({
           .join(''),
       )
 
-  const search = widgetsLeft
+  const search = widgetsRight
     .append('input')
     .attr('type', 'text')
     .attr('class', searchInputClassNames)
@@ -804,14 +816,14 @@ function setupSearch({
 }
 
 function setupInitialStateButton({
-  widgetsLeft,
+  widgetsRight,
   goToInitialStateButtonClassNames,
   defaultStateAll,
   search,
   handleSearch,
   svg,
 }) {
-  const goToInitialState = widgetsLeft
+  const goToInitialState = widgetsRight
     .append('button')
     .text('Go to Initial State')
     .attr('class', goToInitialStateButtonClassNames)
@@ -827,13 +839,13 @@ function setupInitialStateButton({
 }
 
 function setupClearAllButton({
-  widgetsLeft,
+  widgetsRight,
   clearAllButtonClassNames,
   search,
   handleSearch,
   svg,
 }) {
-  const clearAll = widgetsLeft
+  const clearAll = widgetsRight
     .append('button')
     .text('Clear All')
     .attr('class', clearAllButtonClassNames)
@@ -846,13 +858,13 @@ function setupClearAllButton({
 }
 
 function setupShowAllButton({
-  widgetsLeft,
+  widgetsRight,
   showAllButtonClassNames,
   search,
   handleSearch,
   svg,
 }) {
-  const showAll = widgetsLeft
+  const showAll = widgetsRight
     .append('button')
     .text('Show All')
     .attr('class', showAllButtonClassNames)
