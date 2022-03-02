@@ -12,7 +12,7 @@ import {
   descending,
   lineRadial,
 } from 'd3'
-import _, { capitalize } from 'lodash-es'
+import { capitalize, uniq } from 'lodash-es'
 import { formatNumber } from '../utils/formatters'
 
 import { renderDirectionLegend } from './directionLegend'
@@ -134,7 +134,8 @@ export function renderChart({
       xAxisTickValues,
     })
 
-  const nameValues = _(data).map(nameField).uniq().value()
+  const nameValues = uniq(data.map(d => d[nameField]))
+
   const defaultStateAll = defaultState === 'All' ? nameValues : defaultState
 
   const gapInCircles = 30
@@ -790,8 +791,7 @@ function setupSearch({
       // TODO add validation
       .attr('id', `${chartContainerSelector.slice(1)}-search-list`)
       .html(
-        _(nameValues)
-          .uniq()
+        uniq(nameValues)
           .map(el => `<option>${el}</option>`)
           .join(''),
       )
