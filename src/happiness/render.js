@@ -763,7 +763,7 @@ function setupSearch({
   chartContainerSelector,
   nameValues,
 }) {
-  const enableSearchSuggestions = true
+  const enableSearchSuggestions = false
 
   enableSearchSuggestions &&
     widgetsRight
