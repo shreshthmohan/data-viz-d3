@@ -56,34 +56,25 @@ const options = {
 
   /* Initial State */
   // 'All' to make all maces actives
-  defaultState: [
-    'India',
-    'China',
-    'Afghanistan',
-    'Tanzania',
-    'Thailand',
-    'United States',
-    'Kuwait',
-    'Italy',
-    'Poland',
-  ],
-  // defaultState: 'All',
+  // defaultState: [
+  //   'India',
+  //   'China',
+  //   'Afghanistan',
+  //   'Tanzania',
+  //   'Thailand',
+  //   'United States',
+  //   'Kuwait',
+  //   'Italy',
+  //   'Poland',
+  // ],
+  defaultState: 'All',
 
   /* Interactions */
   activeOpacity: 0.8,
   inactiveOpacity: 0.2,
 }
 
-// viz.validateAndRenderMace({
-//   chartContainerSelector: '#chart-container',
-//   dataPath,
-//   options,
-//   dimensions,
-// })
-
 csv(dataPath).then(data => {
-  // console.log(data)
-
   renderChart({
     data,
     dimensions,

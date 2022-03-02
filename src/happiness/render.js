@@ -12,7 +12,7 @@ import {
   descending,
   lineRadial,
 } from 'd3'
-import _ from 'lodash-es'
+import _, { capitalize } from 'lodash-es'
 import { formatNumber } from '../utils/formatters'
 
 import { renderDirectionLegend } from './directionLegend'
@@ -71,7 +71,6 @@ export function renderChart({
     lineWidthRange = [2, 4],
 
     searchInputClassNames = '',
-    goToInitialStateButtonClassNames = '',
     clearAllButtonClassNames = '',
     showAllButtonClassNames = '',
 
@@ -227,14 +226,6 @@ export function renderChart({
     chartContainerSelector,
   })
 
-  setupInitialStateButton({
-    widgetsRight,
-    goToInitialStateButtonClassNames,
-    defaultStateAll,
-    search,
-    handleSearch,
-    svg,
-  })
   setupClearAllButton({
     widgetsRight,
     clearAllButtonClassNames,
@@ -356,7 +347,7 @@ function initializeTooltip() {
     .attr('class', 'dom-tooltip')
     .attr(
       'style',
-      'opacity: 0; position: absolute; text-align: center; background-color: white; border-radius: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; line-height: 1rem; border-width: 1px;',
+      'opacity: 0; position: absolute; background-color: white; border-radius: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.75rem; line-height: 1rem; border: 1px solid #eee;',
     )
 }
 
@@ -728,16 +719,22 @@ function renderMaces({
       const yFieldStartValue = formatNumber(d[yFieldStart], yValueFormatter)
       const yFieldEndValue = formatNumber(d[yFieldEnd], yValueFormatter)
 
-      tooltipDiv.html(
-        `${d[nameField]}
-        <br/>
-        ${xFieldType}: ${xFieldStartValue} → ${xFieldEndValue}
-        <br />
-        ${yFieldType}: ${yFieldStartValue} → ${yFieldEndValue}
-        <br />
-        ${_.capitalize(sizeField)}: ${sizeFieldValue}
-        `,
-      )
+      tooltipDiv.html(`
+        <div class="flex flex-col">
+          <div class="font-bold">${d[nameField]}</div>
+          <div class="flex justify-between gap-1">
+            <div>${xFieldType}</div>
+            <div class="font-bold">${xFieldStartValue} → ${xFieldEndValue}</div>
+          </div>
+          <div class="flex justify-between gap-1">
+            <div>${yFieldType}</div>
+            <div class="font-bold">${yFieldStartValue} → ${yFieldEndValue}</div>
+          </div>
+          <div class="flex justify-between gap-1">
+            <div>${capitalize(sizeField)}</div>
+            <div class="font-bold">${sizeFieldValue}</div>
+          </div>
+        </div>`)
       tooltipDiv
         .style('left', `${e.clientX}px`)
         .style('top', `${e.clientY + 20 + window.scrollY}px`)
@@ -813,29 +810,6 @@ function setupSearch({
     handleSearch(qstr, svg)
   })
   return search
-}
-
-function setupInitialStateButton({
-  widgetsRight,
-  goToInitialStateButtonClassNames,
-  defaultStateAll,
-  search,
-  handleSearch,
-  svg,
-}) {
-  const goToInitialState = widgetsRight
-    .append('button')
-    .text('Go to Initial State')
-    .attr('class', goToInitialStateButtonClassNames)
-  goToInitialState.classed('hidden', false)
-  goToInitialState.on('click', () => {
-    svg.selectAll('.mace').classed('mace-active', false)
-    _.forEach(defaultStateAll, val => {
-      svg.select(`.mace-${toClassText(val)}`).classed('mace-active', true)
-    })
-    search.node().value = ''
-    handleSearch('', svg)
-  })
 }
 
 function setupClearAllButton({
