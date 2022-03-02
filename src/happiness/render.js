@@ -106,6 +106,41 @@ export function renderChart({
 
   const tooltipDiv = initializeTooltip()
 
+  function fillAndShowTooltip({ shapeNode, dataObj }) {
+    tooltipDiv.transition().duration(200).style('opacity', 1)
+    const sizeFieldValue = formatNumber(dataObj[sizeField], sizeValueFormatter)
+    const xFieldStartValue = formatNumber(dataObj[xFieldStart], xValueFormatter)
+    const xFieldEndValue = formatNumber(dataObj[xFieldEnd], xValueFormatter)
+    const yFieldStartValue = formatNumber(dataObj[yFieldStart], yValueFormatter)
+    const yFieldEndValue = formatNumber(dataObj[yFieldEnd], yValueFormatter)
+    tooltipDiv.html(`
+        <div class="flex flex-col">
+          <div class="font-bold">${dataObj[nameField]}</div>
+          <div class="flex justify-between gap-1">
+            <div>${xFieldType}</div>
+            <div class="font-bold">${xFieldStartValue} → ${xFieldEndValue}</div>
+          </div>
+          <div class="flex justify-between gap-1">
+            <div>${yFieldType}</div>
+            <div class="font-bold">${yFieldStartValue} → ${yFieldEndValue}</div>
+          </div>
+          <div class="flex justify-between gap-1">
+            <div>${capitalize(sizeField)}</div>
+            <div class="font-bold">${sizeFieldValue}</div>
+          </div>
+        </div>`)
+
+    const {
+      x: shapeX,
+      y: shapeY,
+      width: shapeWidth,
+      height: shapeHeight,
+    } = shapeNode.getBoundingClientRect()
+    tooltipDiv
+      .style('left', `${shapeX + shapeWidth + window.scrollX}px`)
+      .style('top', `${shapeY + window.scrollY + shapeHeight / 2}px`)
+  }
+
   const dataParsed = parseData({
     data,
     xFieldStart,
@@ -135,6 +170,48 @@ export function renderChart({
     })
 
   const nameValues = uniq(data.map(d => d[nameField]))
+
+  const searchEventHandler = referenceList => (qstr, svg) => {
+    if (qstr) {
+      const lqstr = qstr.toLowerCase()
+      referenceList.forEach(val => {
+        // d3.selectAll('.mace').classed('mace-active', false)
+        const maceName = toClassText(val)
+        if (val.toLowerCase().startsWith(lqstr)) {
+          svg.select(`.mace-${maceName}`).classed('mace-matched', true)
+        } else {
+          svg.select(`.mace-${maceName}`).classed('mace-matched', false)
+        }
+
+        svg.select('.maces').classed('searching', true)
+      })
+      if (svg.selectAll('.mace-matched').size() === 1) {
+        const matchedMace = svg.select('.mace-matched')
+        // matchedMace.data()[0]
+        fillAndShowTooltip({
+          shapeNode: matchedMace.node(),
+          dataObj: matchedMace.data()[0],
+        })
+      } else {
+        tooltipDiv
+          .style('left', '-300px')
+          .transition()
+          .duration(500)
+          .style('opacity', 0)
+      }
+    } else {
+      referenceList.forEach(val => {
+        const maceName = toClassText(val)
+        svg.select(`.mace-${maceName}`).classed('mace-matched', false)
+      })
+      svg.select('.maces').classed('searching', false)
+      tooltipDiv
+        .style('left', '-300px')
+        .transition()
+        .duration(500)
+        .style('opacity', 0)
+    }
+  }
 
   const defaultStateAll = defaultState === 'All' ? nameValues : defaultState
 
@@ -191,28 +268,71 @@ export function renderChart({
   // y-axis
   renderYAxis({ chartCore, coreChartWidth, yScale, yAxisTitle })
 
-  renderMaces({
-    chartCore,
-    dataParsed,
-    sizeField,
-    nameField,
-    defaultStateAll,
-    xFieldStart,
-    xFieldEnd,
-    xScale,
-    yScale,
-    yFieldStart,
-    yFieldEnd,
-    circleSizeScale,
-    lineWidthScale,
-    colorScale,
-    tooltipDiv,
-    sizeValueFormatter,
-    xValueFormatter,
-    yValueFormatter,
-    xFieldType,
-    yFieldType,
-  })
+  // renderMaces
+
+  chartCore
+    .append('g')
+    .attr('class', 'maces')
+    .selectAll('path')
+    .data(dataParsed)
+    .join('path')
+    .sort((a, b) => descending(a[sizeField], b[sizeField]))
+    .attr(
+      'class',
+      d =>
+        `mace
+        ${d.slope >= 0 ? 'mace-same' : 'mace-opposite'}
+        mace-${toClassText(d[nameField])}
+        ${defaultStateAll.includes(d[nameField]) ? 'mace-active' : ''}`,
+    )
+    .attr('d', d => {
+      const x1 = xScale(d[xFieldStart])
+      const y1 = yScale(d[yFieldStart])
+      const x2 = xScale(d[xFieldEnd])
+      const y2 = yScale(d[yFieldEnd])
+      const circleRadius = circleSizeScale(d[sizeField])
+      const stickWidth = lineWidthScale(d[sizeField])
+      const macePoints = maceShape({
+        x1,
+        y1,
+        x2,
+        y2,
+        circleRadius,
+        stickWidth,
+      })
+      return lineRadial()(macePoints)
+    })
+    .attr('transform', d => {
+      const x1 = xScale(d[xFieldStart])
+      const y1 = yScale(d[yFieldStart])
+      const x2 = xScale(d[xFieldEnd])
+      const y2 = yScale(d[yFieldEnd])
+      const rotationAngle = pointsToRotationAngle({ x1, y1, x2, y2 })
+      return `translate(${x2}, ${y2}) rotate(${rotationAngle})`
+    })
+    .attr('fill', d => colorScale(d.slope))
+    .attr('stroke-linecap', 'square')
+    .on('click', function () {
+      const parentMace = select(this)
+      const clickedState = parentMace.classed('mace-active')
+      parentMace.classed('mace-active', !clickedState)
+    })
+    .on('mouseover', function (e, d) {
+      select(this).classed('mace-hovered', true)
+
+      fillAndShowTooltip({
+        shapeNode: this,
+        dataObj: d,
+      })
+    })
+    .on('mouseout', function () {
+      select(this).classed('mace-hovered', false)
+      tooltipDiv
+        .style('left', '-300px')
+        .transition()
+        .duration(500)
+        .style('opacity', 0)
+    })
 
   // searchEventHandler is a higher order function that returns a function based on referenceList (here nameValues)
   // handleSearch accepts search query string and applied appropriate
@@ -275,14 +395,14 @@ function applyInteractionStyles({
     ${chartContainerSelector} g.mace text {
       fill-opacity: 0.8;
     }
-    ${chartContainerSelector} g.maces g.mace.mace-hovered {
+    ${chartContainerSelector} g.maces .mace.mace-hovered {
       stroke: #333;
       stroke-width: 3;
     }
-    ${chartContainerSelector} g.color-legend g.mace-active {
+    ${chartContainerSelector} g.color-legend .mace-active {
       fill-opacity: ${activeOpacity};
     }
-    ${chartContainerSelector} g.color-legend g:not(.mace-active) {
+    ${chartContainerSelector} g.color-legend :not(.mace-active) {
       fill-opacity: ${inactiveOpacity};
     }
   `)
@@ -632,143 +752,6 @@ function renderColorLegend({
   colorLegend
     .attr('height', legendBoundingBox.height)
     .attr('width', legendBoundingBox.width)
-}
-
-function renderMaces({
-  chartCore,
-  dataParsed,
-  sizeField,
-  nameField,
-  defaultStateAll,
-  xFieldStart,
-  xFieldEnd,
-  xScale,
-  yScale,
-  yFieldStart,
-  yFieldEnd,
-  circleSizeScale,
-  lineWidthScale,
-  colorScale,
-  tooltipDiv,
-  sizeValueFormatter,
-  xValueFormatter,
-  yValueFormatter,
-  xFieldType,
-  yFieldType,
-}) {
-  const cGroup = chartCore
-    .append('g')
-    .attr('class', 'maces')
-    //  ${_.isEmpty(defaultStateAll) ? '' : 'default'}`)
-    .selectAll('g')
-    .data(dataParsed)
-    .join('g')
-    .sort((a, b) => descending(a[sizeField], b[sizeField]))
-    .attr(
-      'class',
-      d =>
-        `mace
-        ${d.slope >= 0 ? 'mace-same' : 'mace-opposite'}
-        mace-${toClassText(d[nameField])}
-        ${defaultStateAll.includes(d[nameField]) ? 'mace-active' : ''}`,
-    )
-    .on('click', e => {
-      const parentMace = select(e.target.parentNode)
-      const clickedState = parentMace.classed('mace-active')
-      parentMace.classed('mace-active', !clickedState)
-    })
-
-  cGroup
-    .append('path')
-    .attr('d', d => {
-      const x1 = xScale(d[xFieldStart])
-      const y1 = yScale(d[yFieldStart])
-      const x2 = xScale(d[xFieldEnd])
-      const y2 = yScale(d[yFieldEnd])
-      const circleRadius = circleSizeScale(d[sizeField])
-      const stickWidth = lineWidthScale(d[sizeField])
-      const macePoints = maceShape({
-        x1,
-        y1,
-        x2,
-        y2,
-        circleRadius,
-        stickWidth,
-      })
-      return lineRadial()(macePoints)
-    })
-    .attr('transform', d => {
-      const x1 = xScale(d[xFieldStart])
-      const y1 = yScale(d[yFieldStart])
-      const x2 = xScale(d[xFieldEnd])
-      const y2 = yScale(d[yFieldEnd])
-      const rotationAngle = pointsToRotationAngle({ x1, y1, x2, y2 })
-      return `translate(${x2}, ${y2}) rotate(${rotationAngle})`
-    })
-    .attr('fill', d => colorScale(d.slope))
-    .attr('stroke-linecap', 'square')
-
-  cGroup
-    .on('mouseover', (e, d) => {
-      select(e.target.parentNode).classed('mace-hovered', true)
-
-      tooltipDiv.transition().duration(200).style('opacity', 1)
-
-      const sizeFieldValue = formatNumber(d[sizeField], sizeValueFormatter)
-      const xFieldStartValue = formatNumber(d[xFieldStart], xValueFormatter)
-      const xFieldEndValue = formatNumber(d[xFieldEnd], xValueFormatter)
-      const yFieldStartValue = formatNumber(d[yFieldStart], yValueFormatter)
-      const yFieldEndValue = formatNumber(d[yFieldEnd], yValueFormatter)
-
-      tooltipDiv.html(`
-        <div class="flex flex-col">
-          <div class="font-bold">${d[nameField]}</div>
-          <div class="flex justify-between gap-1">
-            <div>${xFieldType}</div>
-            <div class="font-bold">${xFieldStartValue} → ${xFieldEndValue}</div>
-          </div>
-          <div class="flex justify-between gap-1">
-            <div>${yFieldType}</div>
-            <div class="font-bold">${yFieldStartValue} → ${yFieldEndValue}</div>
-          </div>
-          <div class="flex justify-between gap-1">
-            <div>${capitalize(sizeField)}</div>
-            <div class="font-bold">${sizeFieldValue}</div>
-          </div>
-        </div>`)
-      tooltipDiv
-        .style('left', `${e.clientX}px`)
-        .style('top', `${e.clientY + 20 + window.scrollY}px`)
-    })
-    .on('mouseout', e => {
-      select(e.target.parentNode).classed('mace-hovered', false)
-      tooltipDiv
-        .style('left', '-300px')
-        .transition()
-        .duration(500)
-        .style('opacity', 0)
-    })
-}
-const searchEventHandler = referenceList => (qstr, svg) => {
-  if (qstr) {
-    const lqstr = qstr.toLowerCase()
-    referenceList.forEach(val => {
-      // d3.selectAll('.mace').classed('mace-active', false)
-      const maceName = toClassText(val)
-      if (val.toLowerCase().includes(lqstr)) {
-        svg.select(`.mace-${maceName}`).classed('mace-matched', true)
-      } else {
-        svg.select(`.mace-${maceName}`).classed('mace-matched', false)
-      }
-      svg.select('.maces').classed('searching', true)
-    })
-  } else {
-    referenceList.forEach(val => {
-      const maceName = toClassText(val)
-      svg.select(`.mace-${maceName}`).classed('mace-matched', false)
-    })
-    svg.select('.maces').classed('searching', false)
-  }
 }
 
 function setupSearch({
