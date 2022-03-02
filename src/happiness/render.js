@@ -85,7 +85,7 @@ export function renderChart({
     inactiveOpacity,
   })
 
-  const coreChartWidth = 1000
+  const coreChartWidth = 900
   const {
     svg,
     coreChartHeight,
