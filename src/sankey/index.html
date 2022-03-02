@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../css/styles.css" />
+    <title>UK Energy 2050</title>
+  </head>
+  <body>
+    <div id="main-container" class="max-w-screen-lg mx-auto pt-4 pb-16">
+      <a href="../" class="text-xs">← Back to the list of all charts</a>
+      <div class="max-w-7xl py-4">
+        <h1 class="font-serif font-normal text-xl leading-none text-gray-900">
+          An exploration of how UK can meet its energy requirements in 2050
+        </h1>
+      </div>
+      <div
+        id="chart-container"
+        class="border border-gray-200 p-2 rounded-md border-solid"
+      ></div>
+
+      <ul class="text-xs text-gray-700">
+        <li>
+          Recreated based on
+          <a target="_blank" href="https://observablehq.com/@d3/sankey"
+            >this Sankey diagram</a
+          >
+          by Mike Bostock on Observable.
+        </li>
+        <li>
+          New features added:
+          <ul>
+            <li>
+              Hovering on a node or a link recursively searches sources and
+              sinks, and only highlights the ones connected to it.
+            </li>
+            <li>
+              One can search for a node, again the recursively connected nodes
+              and links are highlighted.
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <script src="./chart.js"></script>
+  </body>
+</html>
