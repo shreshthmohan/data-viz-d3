@@ -3,6 +3,17 @@ import { terser } from 'rollup-plugin-terser'
 
 export default [
   {
+    input: './src/sankey/chart.js',
+    output: [
+      {
+        file: './dist/sankey/chart.js',
+        format: 'umd',
+        name: 'sankey', // use this global var when using in the browser
+      },
+    ],
+    plugins: [resolve(), terser()],
+  },
+  {
     input: './src/fan/chart.js',
     output: [
       {
@@ -20,6 +31,28 @@ export default [
         file: './dist/taxes/chart.js',
         format: 'umd',
         name: 'taxes', // use this global var when using in the browser
+      },
+    ],
+    plugins: [resolve(), terser()],
+  },
+  {
+    input: './src/happiness/chart.js',
+    output: [
+      {
+        file: './dist/happiness/chart.js',
+        format: 'umd',
+        name: 'happiness', // use this global var when using in the browser
+      },
+    ],
+    plugins: [resolve(), terser()],
+  },
+  {
+    input: './src/calendar/chart.js',
+    output: [
+      {
+        file: './dist/calendar/chart.js',
+        format: 'umd',
+        name: 'calendar', // use this global var when using in the browser
       },
     ],
     plugins: [resolve(), terser()],

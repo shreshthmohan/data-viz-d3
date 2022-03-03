@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "rollup": "rollup -c",
-    "build": "./dist.sh && rollup -c && pwd && ls && ls -altr dist",
+    "build": "yarn css:build && ./dist.sh && rollup -c && pwd && ls && ls -altr dist",
     "css:build": "cross-env NODE_ENV=production postcss src/scss/styles.css -o src/css/styles.css",
     "css:watch": "cross-env NODE_ENV=development postcss  src/scss/styles.css -o src/css/styles.css --watch"
   },
@@ -18,6 +18,7 @@
     "cssnano": "^5.0.15",
     "d3": "^7.3.0",
     "d3-delaunay": "^6.0.2",
+    "d3-sankey": "^0.12.3",
     "eslint": "^8.6.0",
     "lodash-es": "^4.17.21",
     "postcss": "^8.4.5",

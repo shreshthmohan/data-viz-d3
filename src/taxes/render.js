@@ -19,8 +19,8 @@ import {
   min,
   max,
 } from 'd3'
+import { preventOverflowThrottled } from '../utils/preventOverflow'
 import { colorLegend } from '../utils/colorLegend'
-import { preventOverflowThrottled } from '../utils/general'
 import { formatNumber } from '../utils/formatters'
 
 export function renderChart({

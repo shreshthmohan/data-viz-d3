@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="../css/styles.css" />
-    <title>Tax variation across S&P 500 companies</title>
+    <title>Happiness Economics</title>
   </head>
   <body>
-    <div id="main-container" class="max-w-screen-lg mx-auto pt-4 pb-16">
+    <div id="main-container" class="max-w-[900px] mx-auto pt-4 pb-16">
       <a href="../" class="text-xs">← Back to the list of all charts</a>
       <div class="max-w-7xl py-4">
         <h1 class="font-serif font-normal text-xl leading-none text-gray-900">
-          Tax variation across S&P 500 companies (2007-2012)
+          Happiness vs GDP across countries of the World
         </h1>
       </div>
       <div
@@ -21,13 +21,17 @@
 
       <ul class="text-xs text-gray-700">
         <li>
-          Recreated in d3.js v7 (original was in v3) from a 2013 NYT article:
+          Recreated in d3.js v7 from Economist's
           <a
-            href="https://archive.nytimes.com/www.nytimes.com/interactive/2013/05/25/sunday-review/corporate-taxes.html"
             target="_blank"
-            rel="noopener noreferrer"
-            >Across U.S. Companies, Tax Rates Vary Greatly</a
+            href="https://infographics.economist.com/2019/AChristmasGiftForYou/AYearInGraphicDetail.pdf"
+            >A year in Graphic Detail 2019 [PDF]</a
           >
+          (Page 81)
+        </li>
+        <li>
+          The custom shape (mace/lollipop) is better than just using a
+          &lt;rect&gt; and a &lt;circle&gt; (TODO: blog post)
         </li>
       </ul>
     </div>
