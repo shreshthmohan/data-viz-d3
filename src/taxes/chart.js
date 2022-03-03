@@ -1,6 +1,6 @@
 import { tsv, schemePuOr, format } from 'd3'
 import { renderChart } from './render'
-import { processCorporateTaxData } from './processCorporateTaxData'
+// import { processCorporateTaxData } from './processCorporateTaxData'
 
 const xAxisTickFormatter = val => {
   // if 65 na
@@ -59,6 +59,21 @@ const options = {
   segmentTypeSplit: '',
 }
 
+// capitalization
+// earnings
+// taxes
+// sector
+// name
+// alias
+// symbol
+// company
+// Effective tax rate
+// fauxTaxRate
+// combinedX
+// combinedY
+// splitX
+// splitY
+
 const dimensions = {
   sizeField: 'capitalization',
   xField: 'fauxTaxRate',
@@ -67,11 +82,9 @@ const dimensions = {
   nameField: 'company',
   segmentField: 'sector',
 }
-const dataPath = 'companies.tsv'
+const dataPath = 'simulationData.tsv'
 
-tsv(dataPath).then(rawData => {
-  const data = processCorporateTaxData(rawData)
-
+tsv(dataPath).then(data => {
   renderChart({
     chartContainerSelector: '#chart-container',
     data,

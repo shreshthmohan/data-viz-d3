@@ -1,9 +1,0 @@
-- companies.tsv is the original data file. It already contains the overall and split positions of the circles ([cx, cy], [x, y])
-- But we shall, at least, initially run a force simulation on the client to show the circle postions
-- (~) Maybe, we can later add a way to pre-calculate positions using a worker?
-- Some companies in the data are now defunct (or not in the S&P 500 anymore), would be interesting to do a "death by tax" analysis of these. One example is Computer Sciences Corporation.
-- Callout with triangle and shadow: https://play.tailwindcss.com/wqeXQCw1AC
-- For tooltip on exactly single search match
-- [Data file](https://static01.nyt.com/newsgraphics/2013/05/13/corporate-taxes/ee84b0191a75f5c652087293ab0efd4710e21f94/companies.tsv)
-- Voronoi for better ineraction space
-- Pointer events: none for elements which we don't wish to trigger interaction for

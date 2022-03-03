@@ -10,16 +10,11 @@ import {
   axisTop,
   scaleBand,
   axisLeft,
-  forceSimulation,
-  forceManyBody,
-  forceX,
-  forceY,
-  forceCollide,
   schemePuOr,
   min,
   max,
 } from 'd3'
-import { preventOverflowThrottled } from '../utils/preventOverflow'
+import { preventOverflow } from '../utils/preventOverflow'
 import { colorLegend } from '../utils/colorLegend'
 import { formatNumber } from '../utils/formatters'
 
@@ -38,10 +33,10 @@ export function renderChart({
     aspectRatioSplit = 0.8,
     compressX = 1,
 
-    marginTop = 60,
-    marginRight = 90,
-    marginBottom = 20,
-    marginLeft = 50,
+    marginTop = 0,
+    marginRight = 0,
+    marginBottom = 0,
+    marginLeft = 0,
 
     bgColor = 'transparent',
 
@@ -425,32 +420,247 @@ export function renderChart({
     .style('pointer-event', 'none')
 
   let allBubbles
-  function ticked() {
-    const u = bubbles.selectAll('circle').data(parsedData)
-    allBubbles = u
-      .enter()
-      .append('circle')
-      .attr('class', 'c')
-      .attr('r', d => sizeScale(d[sizeField]))
-      .attr('id', (d, i) => `c-${i}`)
-      .style('fill', function (d) {
-        return d[xField] > max(xDomain) || d[xField] < min(xDomain)
-          ? xOutsideDomainColor
-          : xColorScale(d[xField])
-      })
-      .merge(u)
-      .attr('cx', function (d) {
-        return d.x
-      })
-      .attr('cy', function (d) {
-        return d.y
-      })
-    u.exit().remove()
-    preventOverflowThrottled({
+
+  function splitSim() {
+    allowSplit = false
+    manageSplitCombine()
+    renderXAxisSplit()
+
+    yAxisSplit()
+
+    yAxisLabel.text(segmentTypeSplit)
+
+    svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightSplit}`)
+
+    bubbles.attr('transform', `translate(0, 0)`)
+    bubbles.raise()
+
+    allBubbles = bubbles.selectAll('circle')
+
+    if (allBubbles.empty()) {
+      // console.log('split sim empty')
+      allBubbles
+        .data(parsedData)
+        .join('circle')
+        .attr('class', 'c')
+        .attr('id', (d, i) => `c-${i}`)
+        .style('fill', function (d) {
+          return d[xField] > max(xDomain) || d[xField] < min(xDomain)
+            ? xOutsideDomainColor
+            : xColorScale(d[xField])
+        })
+        .attr('cx', function (d) {
+          return d.splitX
+        })
+        .attr('cy', function (d) {
+          return d.splitY
+        })
+        .attr('r', 0)
+        .transition()
+        .duration(1000)
+        .attr('r', d => sizeScale(d[sizeField]))
+    } else {
+      // console.log('split sim full')
+      allBubbles
+        .transition()
+        .duration(1000)
+        .attr('cx', function (d) {
+          // console.log(d)
+          return d.splitX
+        })
+        .attr('cy', function (d) {
+          return d.splitY
+        })
+    }
+
+    chartCore.select('#voronoi-container').remove()
+    preventOverflow({
       allComponents,
       svg,
       margins: { marginLeft, marginRight, marginTop, marginBottom },
     })
+
+    const voronoiContainer = chartCore
+      .append('g')
+      .attr('id', 'voronoi-container')
+      .style('pointer-events', 'all')
+    // .attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
+
+    const delaunay = Delaunay.from(
+      parsedData,
+      d => d.splitX,
+      d => d.splitY,
+    )
+
+    const xRange = extent([...xScale.range(), ...additionalXAxisTickValues])
+    const xMax = xRange[1]
+
+    // The array arg passed here is the bounds for Voronoi
+    const voronoi = delaunay.voronoi([
+      -sizeScale.range()[1], // xMin
+      0, // yMin
+      xScale(xMax) + sizeScale.range()[1], // xMax
+      coreChartHeightSplit, // yMax
+    ])
+
+    voronoiContainer
+      .append('defs')
+      .selectAll('clipPath')
+      .data(parsedData)
+      .enter()
+      .append('clipPath')
+      .attr('id', (d, i) => `clip-${i}`)
+      .append('circle')
+      .attr('cx', d => d.splitX)
+      .attr('cy', d => d.splitY)
+      .attr('r', d => sizeScale(d[sizeField]) + 20)
+
+    for (let i = 0; i < parsedData.length; i++) {
+      voronoiContainer
+        .append('path')
+        .attr('id', `v-${i}`)
+        .attr('d', voronoi.renderCell(i))
+        .attr('fill', '#21291f4d')
+        .attr('stroke', '#eee8')
+        .attr('clip-path', () => `url(#clip-${i})`)
+        .on('mouseover', () => {
+          const selectCircle = select(`#c-${i}`)
+          const d = selectCircle.data()
+
+          fillAndShowTooltip({
+            shapeNode: selectCircle.node(),
+            dataObj: d[0],
+          })
+
+          selectCircle.classed('hovered', true)
+        })
+        .on('mouseout', () => {
+          tooltipDiv.style('display', 'none')
+          select(`#c-${i}`).classed('hovered', false)
+        })
+    }
+
+    allowCombine = true
+    manageSplitCombine()
+  }
+
+  function combinedSim() {
+    allowCombine = false
+    manageSplitCombine()
+    renderXAxisCombined()
+
+    yAxisCombined()
+
+    yAxisLabel.text(segmentTypeCombined)
+    svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightCombined}`)
+
+    bubbles.attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
+    bubbles.raise()
+
+    allBubbles = bubbles.selectAll('circle')
+
+    if (allBubbles.empty()) {
+      // console.log('combined sim empty')
+      allBubbles
+        .data(parsedData)
+        .join('circle')
+        .attr('class', 'c')
+        .attr('id', (d, i) => `c-${i}`)
+        .transition()
+        .duration(1000)
+        .style('fill', function (d) {
+          return d[xField] > max(xDomain) || d[xField] < min(xDomain)
+            ? xOutsideDomainColor
+            : xColorScale(d[xField])
+        })
+        .attr('cx', function (d) {
+          return d.combinedX
+        })
+        .attr('cy', function (d) {
+          return d.combinedY
+        })
+        .attr('r', d => sizeScale(d[sizeField]))
+    } else {
+      // console.log('combined sim full')
+      allBubbles
+        .transition()
+        .duration(1000)
+        .attr('cx', function (d) {
+          return d.combinedX
+        })
+        .attr('cy', function (d) {
+          return d.combinedY
+        })
+    }
+    chartCore.select('#voronoi-container').remove()
+    preventOverflow({
+      allComponents,
+      svg,
+      margins: { marginLeft, marginRight, marginTop, marginBottom },
+    })
+
+    allowSplit = true
+    manageSplitCombine()
+
+    const voronoiContainer = chartCore
+      .append('g')
+      .attr('id', 'voronoi-container')
+      .style('pointer-events', 'all')
+      .attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
+
+    const delaunay = Delaunay.from(
+      parsedData,
+      d => d.combinedX,
+      d => d.combinedY,
+    )
+
+    const xRange = extent([...xScale.range(), ...additionalXAxisTickValues])
+    const xMax = xRange[1]
+
+    // The array arg passed here is the bounds for Voronoi
+    const voronoi = delaunay.voronoi([
+      -sizeScale.range()[1], // xMin
+      -coreChartHeightCombined / 2, // yMin
+      xScale(xMax) + sizeScale.range()[1], // xMax
+      coreChartHeightCombined / 2, // yMax
+    ])
+
+    voronoiContainer
+      .append('defs')
+      .selectAll('clipPath')
+      .data(parsedData)
+      .enter()
+      .append('clipPath')
+      .attr('id', (d, i) => `clip-${i}`)
+      .append('circle')
+      .attr('cx', d => d.combinedX)
+      .attr('cy', d => d.combinedY)
+      .attr('r', d => sizeScale(d[sizeField]) + 20)
+
+    for (let i = 0; i < parsedData.length; i++) {
+      voronoiContainer
+        .append('path')
+        .attr('id', `v-${i}`)
+        .attr('d', voronoi.renderCell(i))
+        .attr('fill', '#21291f4d')
+        .attr('stroke', '#eee8')
+        .attr('clip-path', () => `url(#clip-${i})`)
+        .on('mouseover', () => {
+          const selectCircle = select(`#c-${i}`)
+          const d = selectCircle.data()
+
+          fillAndShowTooltip({
+            shapeNode: selectCircle.node(),
+            dataObj: d[0],
+          })
+
+          selectCircle.classed('hovered', true)
+        })
+        .on('mouseout', () => {
+          tooltipDiv.style('display', 'none')
+          select(`#c-${i}`).classed('hovered', false)
+        })
+    }
   }
 
   const search = widgetsLeft
@@ -528,161 +738,6 @@ export function renderChart({
   search.on('keyup', e => {
     searchBy(e.target.value.trim())
   })
-
-  function splitSim() {
-    allowSplit = false
-    manageSplitCombine()
-    renderXAxisSplit()
-
-    yAxisSplit()
-
-    yAxisLabel.text(segmentTypeSplit)
-
-    svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightSplit}`)
-
-    bubbles.attr('transform', `translate(0, 0)`)
-    bubbles.raise()
-
-    forceSimulation(parsedData)
-      .force('charge', forceManyBody().strength(1))
-      .force(
-        'x',
-
-        forceX()
-          .x(function (d) {
-            return xScale(d[xField])
-          })
-          // split X strength
-          .strength(1),
-      )
-      .force(
-        'y',
-
-        forceY()
-          .y(function (d) {
-            return yScale(d[segmentField])
-          })
-          // split Y strength
-          .strength(1.2),
-      )
-      .force(
-        'collision',
-        forceCollide().radius(function (d) {
-          return sizeScale(d[sizeField]) + collisionDistance
-        }),
-      )
-      .on('tick', ticked)
-      .on('end', () => {
-        window.console.log('split force simulation ended')
-        allowCombine = true
-        manageSplitCombine()
-      })
-  }
-  function combinedSim() {
-    allowCombine = false
-    manageSplitCombine()
-    renderXAxisCombined()
-
-    yAxisCombined()
-
-    yAxisLabel.text(segmentTypeCombined)
-    svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightCombined}`)
-
-    bubbles.attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
-    bubbles.raise()
-
-    forceSimulation(parsedData)
-      .force('charge', forceManyBody().strength(1))
-      .force(
-        'x',
-
-        forceX()
-          .x(d => xScale(d[xField]))
-          // combine X strength
-          .strength(1),
-      )
-      .force(
-        'y',
-        forceY()
-          .y(0)
-          // combine Y strength
-          .strength(0.3),
-      )
-      .force(
-        'collision',
-        forceCollide().radius(function (d) {
-          return sizeScale(d[sizeField]) + collisionDistance
-        }),
-      )
-      .on('tick', ticked)
-      .on('end', () => {
-        window.console.log('combined force simulation ended')
-
-        const combinedSimEndData = bubbles.selectAll('circle').data()
-
-        chartCore.select('#combined-dots').remove()
-
-        const voronoiContainer = chartCore
-          .append('g')
-          .attr('id', 'voronoi-container')
-          .style('pointer-events', 'all')
-          .attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
-
-        const delaunay = Delaunay.from(
-          combinedSimEndData,
-          d => d.x,
-          d => d.y,
-        )
-
-        // TODO: extend bounds to capture overflow and N/A circles
-        const voronoi = delaunay.voronoi([
-          0, // xMin
-          -coreChartHeightCombined / 2, // yMin
-          coreChartWidth, // xMax
-          coreChartHeightCombined / 2, // yMax
-        ])
-
-        voronoiContainer
-          .append('defs')
-          .selectAll('clipPath')
-          .data(combinedSimEndData)
-          .enter()
-          .append('clipPath')
-          .attr('id', (d, i) => `clip-${i}`)
-          .append('circle')
-          .attr('cx', d => d.x)
-          .attr('cy', d => d.y)
-          .attr('r', d => sizeScale(d[sizeField]) + 20)
-
-        for (let i = 0; i < combinedSimEndData.length; i++) {
-          voronoiContainer
-            .append('path')
-            .attr('id', `v-${i}`)
-            .attr('d', voronoi.renderCell(i))
-            .attr('fill', '#21291f4d')
-            .attr('stroke', '#00000080')
-            .attr('clip-path', () => `url(#clip-${i})`)
-            .on('mouseover', () => {
-              const selectCircle = select(`#c-${i}`)
-              const d = selectCircle.data()
-
-              fillAndShowTooltip({
-                shapeNode: selectCircle.node(),
-                dataObj: d[0],
-              })
-
-              selectCircle.classed('hovered', true)
-            })
-            .on('mouseout', () => {
-              tooltipDiv.style('display', 'none')
-              select(`#c-${i}`).classed('hovered', false)
-            })
-        }
-
-        allowSplit = true
-        manageSplitCombine()
-      })
-  }
 
   splitButton.on('click', splitSim)
   combinedButton.on('click', combinedSim)
