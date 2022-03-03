@@ -3,6 +3,17 @@ import { terser } from 'rollup-plugin-terser'
 
 export default [
   {
+    input: './src/ridgeline/chart.js',
+    output: [
+      {
+        file: './dist/ridgeline/chart.js',
+        format: 'umd',
+        name: 'ridgeline', // use this global var when using in the browser
+      },
+    ],
+    plugins: [resolve(), terser()],
+  },
+  {
     input: './src/sankey/chart.js',
     output: [
       {
