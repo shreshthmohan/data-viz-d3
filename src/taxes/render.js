@@ -44,8 +44,6 @@ export function renderChart({
 
     colorScheme = schemePuOr[6],
 
-    collisionDistance = 0.5,
-
     /* xField */
     xDomainCustom,
     xAxisLabel = xField,
@@ -94,6 +92,14 @@ export function renderChart({
     }
     circle.c.hovered {
       stroke-opacity: 1;
+    }
+    .show-voronoi {
+      fill: #21291f4d;
+      stroke: #eee8;
+    }
+    .hide-voronoi {
+      fill: none;
+      stroke: none;
     }
   `)
   const coreChartWidth = 700
@@ -432,7 +438,7 @@ export function renderChart({
 
     svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightSplit}`)
 
-    bubbles.attr('transform', `translate(0, 0)`)
+    // bubbles.attr('transform', `translate(0, 0)`)
     bubbles.raise()
 
     allBubbles = bubbles.selectAll('circle')
@@ -449,12 +455,8 @@ export function renderChart({
             ? xOutsideDomainColor
             : xColorScale(d[xField])
         })
-        .attr('cx', function (d) {
-          return d.splitX
-        })
-        .attr('cy', function (d) {
-          return d.splitY
-        })
+        .attr('cx', d => d.splitX)
+        .attr('cy', d => d.splitY)
         .attr('r', 0)
         .transition()
         .duration(1000)
@@ -464,81 +466,87 @@ export function renderChart({
       allBubbles
         .transition()
         .duration(1000)
-        .attr('cx', function (d) {
-          // console.log(d)
-          return d.splitX
-        })
-        .attr('cy', function (d) {
-          return d.splitY
-        })
+        .attr('cx', d => d.splitX)
+        .attr('cy', d => d.splitY)
     }
 
     chartCore.select('#voronoi-container').remove()
-    preventOverflow({
-      allComponents,
-      svg,
-      margins: { marginLeft, marginRight, marginTop, marginBottom },
-    })
 
-    const voronoiContainer = chartCore
-      .append('g')
-      .attr('id', 'voronoi-container')
-      .style('pointer-events', 'all')
-    // .attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
+    function createVoronoiSplit() {
+      const voronoiContainer = chartCore
+        .append('g')
+        .attr('id', 'voronoi-container')
+        .style('pointer-events', 'all')
 
-    const delaunay = Delaunay.from(
-      parsedData,
-      d => d.splitX,
-      d => d.splitY,
-    )
+      const delaunay = Delaunay.from(
+        parsedData,
+        d => d.splitX,
+        d => d.splitY,
+      )
 
-    const xRange = extent([...xScale.range(), ...additionalXAxisTickValues])
-    const xMax = xRange[1]
+      const xRange = extent([...xScale.range(), ...additionalXAxisTickValues])
+      const xMax = xRange[1]
 
-    // The array arg passed here is the bounds for Voronoi
-    const voronoi = delaunay.voronoi([
-      -sizeScale.range()[1], // xMin
-      0, // yMin
-      xScale(xMax) + sizeScale.range()[1], // xMax
-      coreChartHeightSplit, // yMax
-    ])
+      // The array arg passed here is the bounds for Voronoi
+      const voronoi = delaunay.voronoi([
+        -sizeScale.range()[1], // xMin
+        0, // yMin
+        xScale(xMax) + sizeScale.range()[1], // xMax
+        coreChartHeightSplit, // yMax
+      ])
 
-    voronoiContainer
-      .append('defs')
-      .selectAll('clipPath')
-      .data(parsedData)
-      .enter()
-      .append('clipPath')
-      .attr('id', (d, i) => `clip-${i}`)
-      .append('circle')
-      .attr('cx', d => d.splitX)
-      .attr('cy', d => d.splitY)
-      .attr('r', d => sizeScale(d[sizeField]) + 20)
-
-    for (let i = 0; i < parsedData.length; i++) {
       voronoiContainer
-        .append('path')
-        .attr('id', `v-${i}`)
-        .attr('d', voronoi.renderCell(i))
-        .attr('fill', '#21291f4d')
-        .attr('stroke', '#eee8')
-        .attr('clip-path', () => `url(#clip-${i})`)
-        .on('mouseover', () => {
-          const selectCircle = select(`#c-${i}`)
-          const d = selectCircle.data()
+        .append('defs')
+        .selectAll('clipPath')
+        .data(parsedData)
+        .enter()
+        .append('clipPath')
+        .attr('id', (d, i) => `clip-${i}`)
+        .append('circle')
+        .attr('cx', d => d.splitX)
+        .attr('cy', d => d.splitY)
+        .attr('r', d => sizeScale(d[sizeField]) + 20)
 
-          fillAndShowTooltip({
-            shapeNode: selectCircle.node(),
-            dataObj: d[0],
+      for (let i = 0; i < parsedData.length; i++) {
+        voronoiContainer
+          .append('path')
+          .attr('id', `v-${i}`)
+          .attr('d', voronoi.renderCell(i))
+
+          .attr('clip-path', () => `url(#clip-${i})`)
+          .on('mouseover', () => {
+            const selectCircle = select(`#c-${i}`)
+            const d = selectCircle.data()
+
+            fillAndShowTooltip({
+              shapeNode: selectCircle.node(),
+              dataObj: d[0],
+            })
+
+            selectCircle.classed('hovered', true)
           })
-
-          selectCircle.classed('hovered', true)
-        })
-        .on('mouseout', () => {
-          tooltipDiv.style('display', 'none')
-          select(`#c-${i}`).classed('hovered', false)
-        })
+          .on('mouseout', () => {
+            tooltipDiv.style('display', 'none')
+            select(`#c-${i}`).classed('hovered', false)
+          })
+      }
     }
+
+    let runCount = 0
+    let splitIntervalId = window.setInterval(() => {
+      if (runCount > 7) {
+        createVoronoiSplit()
+        window.clearInterval(splitIntervalId)
+        runCount = 0
+        return
+      }
+      preventOverflow({
+        allComponents,
+        svg,
+        margins: { marginLeft, marginRight, marginTop, marginBottom },
+      })
+      runCount++
+    }, 100)
 
     allowCombine = true
     manageSplitCombine()
@@ -554,7 +562,6 @@ export function renderChart({
     yAxisLabel.text(segmentTypeCombined)
     svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightCombined}`)
 
-    bubbles.attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
     bubbles.raise()
 
     allBubbles = bubbles.selectAll('circle')
@@ -573,24 +580,16 @@ export function renderChart({
             ? xOutsideDomainColor
             : xColorScale(d[xField])
         })
-        .attr('cx', function (d) {
-          return d.combinedX
-        })
-        .attr('cy', function (d) {
-          return d.combinedY
-        })
+        .attr('cx', d => d.combinedX)
+        .attr('cy', d => parseFloat(d.combinedY) + coreChartHeightCombined / 2)
         .attr('r', d => sizeScale(d[sizeField]))
     } else {
       // console.log('combined sim full')
       allBubbles
         .transition()
         .duration(1000)
-        .attr('cx', function (d) {
-          return d.combinedX
-        })
-        .attr('cy', function (d) {
-          return d.combinedY
-        })
+        .attr('cx', d => d.combinedX)
+        .attr('cy', d => parseFloat(d.combinedY) + coreChartHeightCombined / 2)
     }
     chartCore.select('#voronoi-container').remove()
     preventOverflow({
@@ -598,69 +597,86 @@ export function renderChart({
       svg,
       margins: { marginLeft, marginRight, marginTop, marginBottom },
     })
+    function createVoronoiCombined() {
+      const voronoiContainer = chartCore
+        .append('g')
+        .attr('id', 'voronoi-container')
+        .style('pointer-events', 'all')
+        .attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
+
+      const delaunay = Delaunay.from(
+        parsedData,
+        d => d.combinedX,
+        d => d.combinedY,
+      )
+
+      const xRange = extent([...xScale.range(), ...additionalXAxisTickValues])
+      const xMax = xRange[1]
+
+      // The array arg passed here is the bounds for Voronoi
+      const voronoi = delaunay.voronoi([
+        -sizeScale.range()[1], // xMin
+        -coreChartHeightCombined / 2, // yMin
+        xScale(xMax) + sizeScale.range()[1], // xMax
+        coreChartHeightCombined / 2, // yMax
+      ])
+
+      voronoiContainer
+        .append('defs')
+        .selectAll('clipPath')
+        .data(parsedData)
+        .enter()
+        .append('clipPath')
+        .attr('id', (d, i) => `clip-${i}`)
+        .append('circle')
+        .attr('cx', d => d.combinedX)
+        .attr('cy', d => d.combinedY)
+        .attr('r', d => sizeScale(d[sizeField]) + 20)
+
+      for (let i = 0; i < parsedData.length; i++) {
+        voronoiContainer
+          .append('path')
+          .attr('id', `v-${i}`)
+          .attr('d', voronoi.renderCell(i))
+          .attr('fill', '#21291f4d')
+          .attr('stroke', '#eee8')
+          .attr('clip-path', () => `url(#clip-${i})`)
+          .on('mouseover', () => {
+            const selectCircle = select(`#c-${i}`)
+            const d = selectCircle.data()
+
+            fillAndShowTooltip({
+              shapeNode: selectCircle.node(),
+              dataObj: d[0],
+            })
+
+            selectCircle.classed('hovered', true)
+          })
+          .on('mouseout', () => {
+            tooltipDiv.style('display', 'none')
+            select(`#c-${i}`).classed('hovered', false)
+          })
+      }
+    }
+
+    let runCount = 0
+    let combinedIntervalId = window.setInterval(() => {
+      if (runCount > 7) {
+        createVoronoiCombined()
+        window.clearInterval(combinedIntervalId)
+        runCount = 0
+        return
+      }
+      preventOverflow({
+        allComponents,
+        svg,
+        margins: { marginLeft, marginRight, marginTop, marginBottom },
+      })
+      runCount++
+    }, 100)
 
     allowSplit = true
     manageSplitCombine()
-
-    const voronoiContainer = chartCore
-      .append('g')
-      .attr('id', 'voronoi-container')
-      .style('pointer-events', 'all')
-      .attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
-
-    const delaunay = Delaunay.from(
-      parsedData,
-      d => d.combinedX,
-      d => d.combinedY,
-    )
-
-    const xRange = extent([...xScale.range(), ...additionalXAxisTickValues])
-    const xMax = xRange[1]
-
-    // The array arg passed here is the bounds for Voronoi
-    const voronoi = delaunay.voronoi([
-      -sizeScale.range()[1], // xMin
-      -coreChartHeightCombined / 2, // yMin
-      xScale(xMax) + sizeScale.range()[1], // xMax
-      coreChartHeightCombined / 2, // yMax
-    ])
-
-    voronoiContainer
-      .append('defs')
-      .selectAll('clipPath')
-      .data(parsedData)
-      .enter()
-      .append('clipPath')
-      .attr('id', (d, i) => `clip-${i}`)
-      .append('circle')
-      .attr('cx', d => d.combinedX)
-      .attr('cy', d => d.combinedY)
-      .attr('r', d => sizeScale(d[sizeField]) + 20)
-
-    for (let i = 0; i < parsedData.length; i++) {
-      voronoiContainer
-        .append('path')
-        .attr('id', `v-${i}`)
-        .attr('d', voronoi.renderCell(i))
-        .attr('fill', '#21291f4d')
-        .attr('stroke', '#eee8')
-        .attr('clip-path', () => `url(#clip-${i})`)
-        .on('mouseover', () => {
-          const selectCircle = select(`#c-${i}`)
-          const d = selectCircle.data()
-
-          fillAndShowTooltip({
-            shapeNode: selectCircle.node(),
-            dataObj: d[0],
-          })
-
-          selectCircle.classed('hovered', true)
-        })
-        .on('mouseout', () => {
-          tooltipDiv.style('display', 'none')
-          select(`#c-${i}`).classed('hovered', false)
-        })
-    }
   }
 
   const search = widgetsLeft

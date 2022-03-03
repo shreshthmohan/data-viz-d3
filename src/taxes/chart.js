@@ -30,8 +30,6 @@ const options = {
   // customColorScheme: ['red', 'blue', 'green', 'black', 'gray'],
   colorScheme: schemePuOr[6],
 
-  collisionDistance: 0.5,
-
   xDomainCustom: [0, 0.6],
   xAxisLabel: 'Effective tax rate (2007-2012)',
   // xValuePrefix: '',

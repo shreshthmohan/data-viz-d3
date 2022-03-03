@@ -22,10 +22,7 @@ export default [
         name: 'taxes', // use this global var when using in the browser
       },
     ],
-    plugins: [
-      resolve(),
-      // terser()
-    ],
+    plugins: [resolve(), terser()],
   },
   // {
   //   input: './src/sankey/chart.js',
