@@ -237,7 +237,6 @@ export function renderChart({
 
   const xRange = extent([...xScale.domain(), ...additionalXAxisTickValues])
   const xMax = xRange[1]
-  console.log({ xMax, xv: xScale(xMax) })
 
   // TODO: separate field for color scale and xscale?
   // Right now both x scale and color scale are based on the same
