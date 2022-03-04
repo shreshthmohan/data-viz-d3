@@ -96,12 +96,10 @@ export function renderChart({
     #voronoi-container {
       fill: transparent;
       stroke: transparent;
-      transition: all 0.5s ease-in-out;
     }
     .voronoi-visible #voronoi-container {
-      fill: #21291f4d;
-      stroke: #eee8;
-      transition: all 0.5s ease-in-out;
+      fill: #21291f20;
+      stroke: #7774;
     }
     
   `)
@@ -339,15 +337,7 @@ export function renderChart({
     .attr('id', 'x-axis')
     .style('pointer-events', 'none')
 
-  // console.log(xScale.ticks().length / reduceXTickByFactor)
-
-  // console.log('tick before:', xScale.ticks().length)
-
-  // xScale.ticks(xScale.ticks().length / reduceXTickByFactor)
-  // console.log('tick after:', xScale.ticks().length)
-
   function renderXAxisSplit() {
-    // console.log('tick x axis split:', xScale.ticks().length)
     xAxis
       .call(
         axisTop(xScale)
@@ -359,7 +349,6 @@ export function renderChart({
       .call(g => g.select('.domain').remove())
   }
   function renderXAxisCombined() {
-    // console.log('tick x axis combined:', xScale.ticks().length)
     xAxis
       .call(
         axisTop(xScale)
@@ -441,6 +430,8 @@ export function renderChart({
 
     svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightSplit}`)
 
+    // to render the circles above axes
+    bubbles.raise()
     allBubbles = bubbles.selectAll('circle')
 
     if (allBubbles.empty()) {
@@ -471,6 +462,11 @@ export function renderChart({
     }
 
     chartCore.select('#voronoi-container').remove()
+    preventOverflow({
+      allComponents,
+      svg,
+      margins: { marginLeft, marginRight, marginTop, marginBottom },
+    })
 
     function createVoronoiSplit() {
       const voronoiContainer = chartCore
@@ -562,6 +558,8 @@ export function renderChart({
     yAxisLabel.text(segmentTypeCombined)
     svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightCombined}`)
 
+    // to render the circles above axes
+    bubbles.raise()
     allBubbles = bubbles.selectAll('circle')
 
     if (allBubbles.empty()) {

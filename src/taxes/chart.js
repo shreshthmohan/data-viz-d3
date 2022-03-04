@@ -57,21 +57,6 @@ const options = {
   segmentTypeSplit: '',
 }
 
-// capitalization
-// earnings
-// taxes
-// sector
-// name
-// alias
-// symbol
-// company
-// Effective tax rate
-// fauxTaxRate
-// combinedX
-// combinedY
-// splitX
-// splitY
-
 const dimensions = {
   sizeField: 'capitalization',
   xField: 'fauxTaxRate',
