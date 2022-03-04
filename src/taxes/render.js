@@ -119,15 +119,21 @@ export function renderChart({
     .append('div')
     .attr(
       'style',
-      'display: flex; justify-content: space-between; padding-bottom: 0.5rem;',
+      'display: flex; flex-wrap: wrap; justify-content: space-between; padding-bottom: 0.5rem;',
     )
   const widgetsLeft = widgets
     .append('div')
-    .attr('style', 'display: flex; align-items: end; column-gap: 5px;')
+    .attr(
+      'style',
+      'display: flex; flex-wrap: wrap; align-items: end; column-gap: 5px;',
+    )
 
   const widgetsRight = widgets
     .append('div')
-    .attr('style', 'display: flex; align-items: center; column-gap: 10px;')
+    .attr(
+      'style',
+      'display: flex; flex-wrap: wrap; align-items: center; column-gap: 10px;',
+    )
 
   const svg = chartParent
     .append('svg')
