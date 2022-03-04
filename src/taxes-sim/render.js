@@ -18,7 +18,7 @@ import {
   max,
 } from 'd3'
 import { preventOverflowThrottled } from '../utils/preventOverflow'
-import { colorLegend } from '../utils/colorLegend'
+import { colorLegendThreshold } from '../utils/colorLegend'
 import { formatNumber } from '../utils/formatters'
 
 export function renderChart({
@@ -90,6 +90,10 @@ export function renderChart({
     .g-searching circle.c.c-match {
       stroke-opacity: 1;
     }
+    .g-searching circle.c:not(.c-match) {
+      fill-opacity: 0.2;
+      stroke-opacity: 0.2;
+    }
     circle.c {
       stroke-width: 1;
       stroke: #000;
@@ -121,9 +125,9 @@ export function renderChart({
     .append('div')
     .attr('style', 'display: flex; align-items: end; column-gap: 5px;')
 
-  const widgetsRight = widgets
-    .append('div')
-    .attr('style', 'display: flex; align-items: center; column-gap: 10px;')
+  // const widgetsRight = widgets
+  //   .append('div')
+  //   .attr('style', 'display: flex; align-items: center; column-gap: 10px;')
 
   const svg = chartParent
     .append('svg')
@@ -227,6 +231,9 @@ export function renderChart({
   const xDomain = xDomainCustom || xDomainDefault
   const xScale = scaleLinear().domain(xDomain).range([0, coreChartWidth])
 
+  const xRange = extent([...xScale.domain(), ...additionalXAxisTickValues])
+  const xMax = xRange[1]
+
   // TODO: separate field for color scale and xscale?
   // Right now both x scale and color scale are based on the same
   const xColorScale = scaleQuantize()
@@ -234,22 +241,17 @@ export function renderChart({
     .range(customColorScheme || colorScheme)
     .nice()
 
-  widgetsRight
-    .append('svg')
-    .attr('width', colorLegendWidth)
-    .attr('height', 45)
-    .append(() =>
-      colorLegend({
-        color: xColorScale,
-        title: colorLegendTitle,
-        width: colorLegendWidth,
-        height: 48,
-        tickFormat: xValueFormatter,
-      }),
-    )
+  const colorLegendContainerGroup = allComponents.append('g')
+  colorLegendThreshold({
+    color: xColorScale,
+    title: colorLegendTitle,
+    width: colorLegendWidth,
+    height: 48,
+    tickFormat: xValueFormatter,
+    selection: colorLegendContainerGroup,
+  })
 
   // Size Legend
-
   const sizeValues = sizeLegendValues.map(a => sizeScale(a))
 
   let cumulativeSize = 0
@@ -264,8 +266,9 @@ export function renderChart({
     cumulativeSizes.push(cumulativeSize)
   })
 
-  const sizeLegend = widgetsRight.append('svg')
-  const sizeLegendContainerGroup = sizeLegend.append('g')
+  const sizeLegendContainerGroup = allComponents
+    .append('g')
+    .attr('id', 'size-legend')
 
   // TODO: move this to options?
   const moveSizeObjectDownBy = 5
@@ -310,11 +313,6 @@ export function renderChart({
     .style('font-size', 10)
     .style('font-weight', 600)
     .text(sizeLegendTitle)
-
-  const legendBoundingBox = sizeLegendContainerGroup.node().getBBox()
-  sizeLegend
-    .attr('height', legendBoundingBox.height)
-    .attr('width', legendBoundingBox.width)
 
   chartCore
     .append('g')
@@ -372,13 +370,13 @@ export function renderChart({
       .append('g')
       .attr('id', 'y-axis-split')
       .style('pointer-events', 'none')
-      .call(axisLeft(yScaleSplit).tickSize(-coreChartWidth))
+      .call(axisLeft(yScaleSplit).tickSize(-xScale(xMax)))
       .call(g => g.select('.domain').remove())
       .call(g => {
         g.selectAll('.tick line').attr('stroke-opacity', 0.1)
         g.selectAll('.tick text')
           .attr('transform', 'translate(-20,0)')
-          .classed('text-xs font-bold', true)
+          .classed('text-xs', true)
       })
       .attr('opacity', 0)
       .transition()
@@ -395,7 +393,7 @@ export function renderChart({
     chartCore
       .append('g')
       .attr('id', 'y-axis-combined')
-      .call(axisLeft(yScaleCombined).tickSize(-coreChartWidth))
+      .call(axisLeft(yScaleCombined).tickSize(-xScale(xMax)))
       .call(g => g.select('.domain').remove())
       .call(g => {
         g.selectAll('.tick line').attr('stroke-opacity', 0.1)
@@ -623,4 +621,49 @@ export function renderChart({
   combinedButton.on('click', combinedSim)
 
   combinedSim()
+
+  // Locating color and size legends next to each other and collectively just above the core chart
+  const {
+    height: colorLegendContainerHeight,
+    width: colorLegendContainerWidth,
+    y: colorLegendContainerY,
+    x: colorLegendContainerX,
+  } = colorLegendContainerGroup.node().getBBox()
+
+  const {
+    height: sizeLegendHeight,
+    width: sizeLegendWidth,
+    y: sizeLegendY,
+    x: sizeLegendX,
+  } = sizeLegendContainerGroup.node().getBBox()
+
+  const {
+    x: chartCoreX,
+    width: chartCoreWidth,
+    y: chartCoreY,
+  } = chartCore.node().getBBox()
+
+  const legendHeight = max([sizeLegendHeight, colorLegendContainerHeight])
+
+  sizeLegendContainerGroup.attr(
+    'transform',
+    `translate(${
+      chartCoreX + chartCoreWidth - sizeLegendWidth - sizeLegendX
+    }, ${chartCoreY - legendHeight - sizeLegendY})`,
+  )
+
+  const sizeLegendAndColorLegendGap = 10
+
+  colorLegendContainerGroup.attr(
+    'transform',
+    `translate(${
+      chartCoreX +
+      chartCoreWidth -
+      sizeLegendWidth -
+      sizeLegendX -
+      colorLegendContainerWidth +
+      colorLegendContainerX -
+      sizeLegendAndColorLegendGap
+    }, ${chartCoreY - legendHeight - colorLegendContainerY})`,
+  )
 }

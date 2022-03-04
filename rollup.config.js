@@ -24,7 +24,6 @@ export default [
     ],
     plugins: [resolve(), terser()],
   },
-
   {
     input: './src/sankey/chart.js',
     output: [

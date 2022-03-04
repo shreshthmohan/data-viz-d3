@@ -15,7 +15,7 @@ import {
   max,
 } from 'd3'
 import { preventOverflow } from '../utils/preventOverflow'
-import { colorLegend } from '../utils/colorLegend'
+import { colorLegendThreshold } from '../utils/colorLegend'
 import { formatNumber } from '../utils/formatters'
 
 export function renderChart({
@@ -85,6 +85,10 @@ export function renderChart({
     .g-searching circle.c.c-match {
       stroke-opacity: 1;
     }
+    .g-searching circle.c:not(.c-match) {
+      fill-opacity: 0.2;
+      stroke-opacity: 0.2;
+    }
     circle.c {
       stroke-width: 1;
       stroke: #000;
@@ -144,6 +148,7 @@ export function renderChart({
 
   const chartCore = allComponents
     .append('g')
+    .attr('id', 'core-chart')
     .attr('transform', `translate(${marginLeft}, ${marginTop})`)
 
   const tooltipDiv = select('body')
@@ -200,10 +205,7 @@ export function renderChart({
   function manageSplitCombine() {
     if (!allowSplit) {
       splitButton.node().disabled = true
-      splitButton.attr(
-        'title',
-        'Combined force simulation is either in progress or current configuration is already split',
-      )
+      splitButton.attr('title', 'The current configuration is already split')
     } else {
       splitButton.node().disabled = false
 
@@ -214,7 +216,7 @@ export function renderChart({
       combinedButton.node().disabled = true
       combinedButton.attr(
         'title',
-        'Split force simulation is either in progress or current configuration is already combined',
+        'The current configuration is already combined',
       )
     } else {
       combinedButton.node().disabled = false
@@ -251,19 +253,15 @@ export function renderChart({
     .range(customColorScheme || colorScheme)
     .nice()
 
-  widgetsRight
-    .append('svg')
-    .attr('width', colorLegendWidth)
-    .attr('height', 45)
-    .append(() =>
-      colorLegend({
-        color: xColorScale,
-        title: colorLegendTitle,
-        width: colorLegendWidth,
-        height: 48,
-        tickFormat: xValueFormatter,
-      }),
-    )
+  const colorLegendContainerGroup = allComponents.append('g')
+  colorLegendThreshold({
+    color: xColorScale,
+    title: colorLegendTitle,
+    width: colorLegendWidth,
+    height: 48,
+    tickFormat: xValueFormatter,
+    selection: colorLegendContainerGroup,
+  })
 
   // Size Legend
 
@@ -281,8 +279,9 @@ export function renderChart({
     cumulativeSizes.push(cumulativeSize)
   })
 
-  const sizeLegend = widgetsRight.append('svg')
-  const sizeLegendContainerGroup = sizeLegend.append('g')
+  const sizeLegendContainerGroup = allComponents
+    .append('g')
+    .attr('id', 'size-legend')
 
   // TODO: move this to options?
   const moveSizeObjectDownBy = 5
@@ -327,11 +326,6 @@ export function renderChart({
     .style('font-size', 10)
     .style('font-weight', 600)
     .text(sizeLegendTitle)
-
-  const legendBoundingBox = sizeLegendContainerGroup.node().getBBox()
-  sizeLegend
-    .attr('height', legendBoundingBox.height)
-    .attr('width', legendBoundingBox.width)
 
   chartCore
     .append('g')
@@ -532,11 +526,11 @@ export function renderChart({
           })
       }
     }
+    createVoronoiSplit()
 
     let runCount = 0
     let splitIntervalId = window.setInterval(() => {
       if (runCount > 11) {
-        createVoronoiSplit()
         window.clearInterval(splitIntervalId)
         runCount = 0
         return
@@ -652,11 +646,11 @@ export function renderChart({
           })
       }
     }
+    createVoronoiCombined()
 
     let runCount = 0
     let combinedIntervalId = window.setInterval(() => {
       if (runCount > 11) {
-        createVoronoiCombined()
         window.clearInterval(combinedIntervalId)
         runCount = 0
         return
@@ -755,7 +749,7 @@ export function renderChart({
   combinedButton.on('click', combinedSim)
 
   // Voronoi visibility checkbox
-  const voronoiVisbilityForm = chartParent
+  const voronoiVisbilityForm = widgetsRight
     .append('div')
     .attr('class', 'text-xs')
 
@@ -773,4 +767,48 @@ export function renderChart({
     .attr('for', 'show-voronoi')
 
   combinedSim()
+
+  const {
+    height: colorLegendContainerHeight,
+    width: colorLegendContainerWidth,
+    y: colorLegendContainerY,
+    x: colorLegendContainerX,
+  } = colorLegendContainerGroup.node().getBBox()
+
+  const {
+    height: sizeLegendHeight,
+    width: sizeLegendWidth,
+    y: sizeLegendY,
+    x: sizeLegendX,
+  } = sizeLegendContainerGroup.node().getBBox()
+
+  const {
+    x: chartCoreX,
+    width: chartCoreWidth,
+    y: chartCoreY,
+  } = chartCore.node().getBBox()
+
+  const legendHeight = max([sizeLegendHeight, colorLegendContainerHeight])
+
+  sizeLegendContainerGroup.attr(
+    'transform',
+    `translate(${
+      chartCoreX + chartCoreWidth - sizeLegendWidth - sizeLegendX
+    }, ${chartCoreY - legendHeight - sizeLegendY})`,
+  )
+
+  const sizeLegendAndColorLegendGap = 10
+
+  colorLegendContainerGroup.attr(
+    'transform',
+    `translate(${
+      chartCoreX +
+      chartCoreWidth -
+      sizeLegendWidth -
+      sizeLegendX -
+      colorLegendContainerWidth +
+      colorLegendContainerX -
+      sizeLegendAndColorLegendGap
+    }, ${chartCoreY - legendHeight - colorLegendContainerY})`,
+  )
 }
