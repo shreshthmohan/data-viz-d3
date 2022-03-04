@@ -432,12 +432,11 @@ export function renderChart({
 
     // to render the circles above axes
     bubbles.raise()
-    allBubbles = bubbles.selectAll('circle')
+    allBubbles = bubbles.selectAll('circle').data(parsedData)
 
     if (allBubbles.empty()) {
       // console.log('split sim empty')
       allBubbles
-        .data(parsedData)
         .join('circle')
         .attr('class', 'c')
         .attr('id', (d, i) => `c-${i}`)
@@ -508,7 +507,6 @@ export function renderChart({
           .append('path')
           .attr('id', `v-${i}`)
           .attr('d', voronoi.renderCell(i))
-
           .attr('clip-path', () => `url(#clip-${i})`)
           .on('mouseover', () => {
             const selectCircle = select(`#c-${i}`)
@@ -560,12 +558,11 @@ export function renderChart({
 
     // to render the circles above axes
     bubbles.raise()
-    allBubbles = bubbles.selectAll('circle')
+    allBubbles = bubbles.selectAll('circle').data(parsedData)
 
     if (allBubbles.empty()) {
       // console.log('combined sim empty')
       allBubbles
-        .data(parsedData)
         .join('circle')
         .attr('class', 'c')
         .attr('id', (d, i) => `c-${i}`)
