@@ -1,4 +1,5 @@
 /* global window */
+import { Delaunay } from 'd3-delaunay'
 import {
   select,
   scaleSqrt,
@@ -9,17 +10,12 @@ import {
   axisTop,
   scaleBand,
   axisLeft,
-  forceSimulation,
-  forceManyBody,
-  forceX,
-  forceY,
-  forceCollide,
   schemePuOr,
   min,
   max,
 } from 'd3'
-import { preventOverflowThrottled } from '../utils/preventOverflow'
-import { colorLegend } from '../utils/colorLegend'
+import { preventOverflow } from '../utils/preventOverflow'
+import { colorLegendThreshold } from '../utils/colorLegend'
 import { formatNumber } from '../utils/formatters'
 
 export function renderChart({
@@ -37,18 +33,16 @@ export function renderChart({
     aspectRatioSplit = 0.8,
     compressX = 1,
 
-    marginTop = 60,
-    marginRight = 90,
-    marginBottom = 20,
-    marginLeft = 50,
+    marginTop = 0,
+    marginRight = 0,
+    marginBottom = 0,
+    marginLeft = 0,
 
     bgColor = 'transparent',
 
     customColorScheme,
 
     colorScheme = schemePuOr[6],
-
-    collisionDistance = 0.5,
 
     /* xField */
     xDomainCustom,
@@ -91,6 +85,10 @@ export function renderChart({
     .g-searching circle.c.c-match {
       stroke-opacity: 1;
     }
+    .g-searching circle.c:not(.c-match) {
+      fill-opacity: 0.2;
+      stroke-opacity: 0.2;
+    }
     circle.c {
       stroke-width: 1;
       stroke: #000;
@@ -99,6 +97,15 @@ export function renderChart({
     circle.c.hovered {
       stroke-opacity: 1;
     }
+    #voronoi-container {
+      fill: transparent;
+      stroke: transparent;
+    }
+    .voronoi-visible #voronoi-container {
+      fill: #21291f20;
+      stroke: #7774;
+    }
+    
   `)
   const coreChartWidth = 700
 
@@ -116,15 +123,21 @@ export function renderChart({
     .append('div')
     .attr(
       'style',
-      'display: flex; justify-content: space-between; padding-bottom: 0.5rem;',
+      'display: flex; flex-wrap: wrap; justify-content: space-between; padding-bottom: 0.5rem;',
     )
   const widgetsLeft = widgets
     .append('div')
-    .attr('style', 'display: flex; align-items: end; column-gap: 5px;')
+    .attr(
+      'style',
+      'display: flex; flex-wrap: wrap; align-items: end; column-gap: 5px;',
+    )
 
   const widgetsRight = widgets
     .append('div')
-    .attr('style', 'display: flex; align-items: center; column-gap: 10px;')
+    .attr(
+      'style',
+      'display: flex; flex-wrap: wrap; align-items: center; column-gap: 10px;',
+    )
 
   const svg = chartParent
     .append('svg')
@@ -135,20 +148,25 @@ export function renderChart({
 
   const chartCore = allComponents
     .append('g')
+    .attr('id', 'core-chart')
     .attr('transform', `translate(${marginLeft}, ${marginTop})`)
 
   const tooltipDiv = select('body')
     .append('div')
     .attr('class', `dom-tooltip absolute`)
     .style('display', 'none')
+    .style('pointer-events', 'none')
 
   // Warning: trying to parameterize values like color or
   // border width in Tailwind will fail. Because of how JIT mode
   // scans files. It can't read through interpolation!
   // bg-${white} or border-[${6}px] won't work
-  const tooltipChild = tooltipDiv.append('div').attr(
-    'class',
-    `
+  const tooltipChild = tooltipDiv
+    .append('div')
+    .style('pointer-events', 'none')
+    .attr(
+      'class',
+      `
     w-48 bg-white border-solid border border-slate-500 rounded px-2 py-1 text-xs
 
     after:absolute after:border-[6px] after:border-transparent
@@ -161,7 +179,7 @@ export function renderChart({
    
     drop-shadow-md
     `,
-  )
+    )
 
   const parsedData = data.map(d => ({
     ...d,
@@ -187,10 +205,7 @@ export function renderChart({
   function manageSplitCombine() {
     if (!allowSplit) {
       splitButton.node().disabled = true
-      splitButton.attr(
-        'title',
-        'Combined force simulation is either in progress or current configuration is already split',
-      )
+      splitButton.attr('title', 'The current configuration is already split')
     } else {
       splitButton.node().disabled = false
 
@@ -201,7 +216,7 @@ export function renderChart({
       combinedButton.node().disabled = true
       combinedButton.attr(
         'title',
-        'Split force simulation is either in progress or current configuration is already combined',
+        'The current configuration is already combined',
       )
     } else {
       combinedButton.node().disabled = false
@@ -228,6 +243,9 @@ export function renderChart({
   const xDomain = xDomainCustom || xDomainDefault
   const xScale = scaleLinear().domain(xDomain).range([0, coreChartWidth])
 
+  const xRange = extent([...xScale.domain(), ...additionalXAxisTickValues])
+  const xMax = xRange[1]
+
   // TODO: separate field for color scale and xscale?
   // Right now both x scale and color scale are based on the same
   const xColorScale = scaleQuantize()
@@ -235,19 +253,15 @@ export function renderChart({
     .range(customColorScheme || colorScheme)
     .nice()
 
-  widgetsRight
-    .append('svg')
-    .attr('width', colorLegendWidth)
-    .attr('height', 45)
-    .append(() =>
-      colorLegend({
-        color: xColorScale,
-        title: colorLegendTitle,
-        width: colorLegendWidth,
-        height: 48,
-        tickFormat: xValueFormatter,
-      }),
-    )
+  const colorLegendContainerGroup = allComponents.append('g')
+  colorLegendThreshold({
+    color: xColorScale,
+    title: colorLegendTitle,
+    width: colorLegendWidth,
+    height: 48,
+    tickFormat: xValueFormatter,
+    selection: colorLegendContainerGroup,
+  })
 
   // Size Legend
 
@@ -265,8 +279,9 @@ export function renderChart({
     cumulativeSizes.push(cumulativeSize)
   })
 
-  const sizeLegend = widgetsRight.append('svg')
-  const sizeLegendContainerGroup = sizeLegend.append('g')
+  const sizeLegendContainerGroup = allComponents
+    .append('g')
+    .attr('id', 'size-legend')
 
   // TODO: move this to options?
   const moveSizeObjectDownBy = 5
@@ -312,11 +327,6 @@ export function renderChart({
     .style('font-weight', 600)
     .text(sizeLegendTitle)
 
-  const legendBoundingBox = sizeLegendContainerGroup.node().getBBox()
-  sizeLegend
-    .attr('height', legendBoundingBox.height)
-    .attr('width', legendBoundingBox.width)
-
   chartCore
     .append('g')
     .attr('transform', `translate(${coreChartWidth / 2}, ${-20})`)
@@ -325,17 +335,12 @@ export function renderChart({
     .text(xAxisLabel)
     .attr('text-anchor', 'middle')
 
-  const xAxis = chartCore.append('g').attr('id', 'x-axis')
-
-  // console.log(xScale.ticks().length / reduceXTickByFactor)
-
-  // console.log('tick before:', xScale.ticks().length)
-
-  // xScale.ticks(xScale.ticks().length / reduceXTickByFactor)
-  // console.log('tick after:', xScale.ticks().length)
+  const xAxis = chartCore
+    .append('g')
+    .attr('id', 'x-axis')
+    .style('pointer-events', 'none')
 
   function renderXAxisSplit() {
-    // console.log('tick x axis split:', xScale.ticks().length)
     xAxis
       .call(
         axisTop(xScale)
@@ -347,7 +352,6 @@ export function renderChart({
       .call(g => g.select('.domain').remove())
   }
   function renderXAxisCombined() {
-    // console.log('tick x axis combined:', xScale.ticks().length)
     xAxis
       .call(
         axisTop(xScale)
@@ -363,7 +367,7 @@ export function renderChart({
     .append('g')
     .attr('transform', `translate(${-23}, ${-20})`)
     .append('text')
-    .attr('class', 'text-xs font-semibold ')
+    .attr('class', 'text-xs')
     .text(segmentType)
     .attr('text-anchor', 'end')
 
@@ -373,13 +377,13 @@ export function renderChart({
       .append('g')
       .attr('id', 'y-axis-split')
       .style('pointer-events', 'none')
-      .call(axisLeft(yScale).tickSize(-coreChartWidth))
+      .call(axisLeft(yScale).tickSize(-xScale(xMax)))
       .call(g => g.select('.domain').remove())
       .call(g => {
         g.selectAll('.tick line').attr('stroke-opacity', 0.1)
         g.selectAll('.tick text')
           .attr('transform', 'translate(-20,0)')
-          .classed('text-xs font-bold', true)
+          .classed('text-xs', true)
       })
       .attr('opacity', 0)
       .transition()
@@ -396,7 +400,9 @@ export function renderChart({
     chartCore
       .append('g')
       .attr('id', 'y-axis-combined')
-      .call(axisLeft(yScaleCombined).tickSize(-coreChartWidth))
+      .style('pointer-events', 'none')
+      // added xScale(xMax) to accomodate extra ticks (N/A tax rate in this case)
+      .call(axisLeft(yScaleCombined).tickSize(-xScale(xMax)))
       .call(g => g.select('.domain').remove())
       .call(g => {
         g.selectAll('.tick line').attr('stroke-opacity', 0.1)
@@ -410,44 +416,255 @@ export function renderChart({
       .attr('opacity', 1)
   }
 
-  const bubbles = chartCore.append('g').attr('class', 'bubbles')
+  const bubbles = chartCore
+    .append('g')
+    .attr('class', 'bubbles')
+    .style('pointer-event', 'none')
 
   let allBubbles
-  function ticked() {
-    const u = bubbles.selectAll('circle').data(parsedData)
-    allBubbles = u
-      .enter()
-      .append('circle')
-      .attr('class', 'c')
-      .attr('r', d => sizeScale(d[sizeField]))
-      .style('fill', function (d) {
-        return d[xField] > max(xDomain) || d[xField] < min(xDomain)
-          ? xOutsideDomainColor
-          : xColorScale(d[xField])
-      })
-      .merge(u)
-      .attr('cx', function (d) {
-        return d.x
-      })
-      .attr('cy', function (d) {
-        return d.y
-      })
-      .on('mouseover', function (e, d) {
-        fillAndShowTooltip({ shapeNode: this, dataObj: d })
 
-        select(this).classed('hovered', true)
-      })
-      .on('mouseout', function () {
-        tooltipDiv.style('display', 'none')
+  function splitSim() {
+    allowSplit = false
+    manageSplitCombine()
+    renderXAxisSplit()
 
-        select(this).classed('hovered', false)
-      })
-    u.exit().remove()
-    preventOverflowThrottled({
+    yAxisSplit()
+
+    yAxisLabel.text(segmentTypeSplit)
+
+    svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightSplit}`)
+
+    // to render the circles above axes
+    bubbles.raise()
+    allBubbles = bubbles.selectAll('circle').data(parsedData)
+
+    if (allBubbles.empty()) {
+      // console.log('split sim empty')
+      allBubbles
+        .join('circle')
+        .attr('class', 'c')
+        .attr('id', (d, i) => `c-${i}`)
+        .style('fill', function (d) {
+          return d[xField] > max(xDomain) || d[xField] < min(xDomain)
+            ? xOutsideDomainColor
+            : xColorScale(d[xField])
+        })
+        .attr('cx', d => d.splitX)
+        .attr('cy', d => d.splitY)
+        .attr('r', 0)
+        .transition()
+        .duration(1000)
+        .attr('r', d => sizeScale(d[sizeField]))
+    } else {
+      // console.log('split sim full')
+      allBubbles
+        .transition()
+        .duration(1000)
+        .attr('cx', d => d.splitX)
+        .attr('cy', d => d.splitY)
+    }
+
+    chartCore.select('#voronoi-container').remove()
+    preventOverflow({
       allComponents,
       svg,
       margins: { marginLeft, marginRight, marginTop, marginBottom },
     })
+
+    function createVoronoiSplit() {
+      const voronoiContainer = chartCore
+        .append('g')
+        .attr('id', 'voronoi-container')
+        .style('pointer-events', 'all')
+
+      const delaunay = Delaunay.from(
+        parsedData,
+        d => d.splitX,
+        d => d.splitY,
+      )
+
+      // The array arg passed here is the bounds for Voronoi
+      const voronoi = delaunay.voronoi([
+        -sizeScale.range()[1], // xMin
+        0, // yMin
+        xScale(xMax) + sizeScale.range()[1], // xMax
+        coreChartHeightSplit, // yMax
+      ])
+
+      voronoiContainer
+        .append('defs')
+        .selectAll('clipPath')
+        .data(parsedData)
+        .enter()
+        .append('clipPath')
+        .attr('id', (d, i) => `clip-${i}`)
+        .append('circle')
+        .attr('cx', d => d.splitX)
+        .attr('cy', d => d.splitY)
+        .attr('r', d => sizeScale(d[sizeField]) + 20)
+
+      for (let i = 0; i < parsedData.length; i++) {
+        voronoiContainer
+          .append('path')
+          .attr('id', `v-${i}`)
+          .attr('d', voronoi.renderCell(i))
+          .attr('clip-path', () => `url(#clip-${i})`)
+          .on('mouseover', () => {
+            const selectCircle = select(`#c-${i}`)
+            const d = selectCircle.data()
+
+            fillAndShowTooltip({
+              shapeNode: selectCircle.node(),
+              dataObj: d[0],
+            })
+
+            selectCircle.classed('hovered', true)
+          })
+          .on('mouseout', () => {
+            tooltipDiv.style('display', 'none')
+            select(`#c-${i}`).classed('hovered', false)
+          })
+      }
+    }
+    createVoronoiSplit()
+
+    let runCount = 0
+    let splitIntervalId = window.setInterval(() => {
+      if (runCount > 11) {
+        window.clearInterval(splitIntervalId)
+        runCount = 0
+        return
+      }
+      preventOverflow({
+        allComponents,
+        svg,
+        margins: { marginLeft, marginRight, marginTop, marginBottom },
+      })
+      runCount++
+    }, 100)
+
+    allowCombine = true
+    manageSplitCombine()
+  }
+
+  function combinedSim() {
+    allowCombine = false
+    manageSplitCombine()
+    renderXAxisCombined()
+
+    yAxisCombined()
+
+    yAxisLabel.text(segmentTypeCombined)
+    svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightCombined}`)
+
+    // to render the circles above axes
+    bubbles.raise()
+    allBubbles = bubbles.selectAll('circle').data(parsedData)
+
+    if (allBubbles.empty()) {
+      // console.log('combined sim empty')
+      allBubbles
+        .join('circle')
+        .attr('class', 'c')
+        .attr('id', (d, i) => `c-${i}`)
+        .transition()
+        .duration(1000)
+        .style('fill', function (d) {
+          return d[xField] > max(xDomain) || d[xField] < min(xDomain)
+            ? xOutsideDomainColor
+            : xColorScale(d[xField])
+        })
+        .attr('cx', d => d.combinedX)
+        .attr('cy', d => d.combinedY)
+        .attr('r', d => sizeScale(d[sizeField]))
+    } else {
+      // console.log('combined sim full')
+      allBubbles
+        .transition()
+        .duration(1000)
+        .attr('cx', d => d.combinedX)
+        .attr('cy', d => d.combinedY)
+    }
+    chartCore.select('#voronoi-container').remove()
+    preventOverflow({
+      allComponents,
+      svg,
+      margins: { marginLeft, marginRight, marginTop, marginBottom },
+    })
+    function createVoronoiCombined() {
+      const voronoiContainer = chartCore
+        .append('g')
+        .attr('id', 'voronoi-container')
+        .style('pointer-events', 'all')
+
+      const delaunay = Delaunay.from(
+        parsedData,
+        d => d.combinedX,
+        d => d.combinedY,
+      )
+
+      // The array arg passed here is the bounds for Voronoi
+      const voronoi = delaunay.voronoi([
+        -sizeScale.range()[1], // xMin
+        0, // yMin
+        xScale(xMax) + sizeScale.range()[1], // xMax
+        coreChartHeightCombined, // yMax
+      ])
+
+      voronoiContainer
+        .append('defs')
+        .selectAll('clipPath')
+        .data(parsedData)
+        .enter()
+        .append('clipPath')
+        .attr('id', (d, i) => `clip-${i}`)
+        .append('circle')
+        .attr('cx', d => d.combinedX)
+        .attr('cy', d => d.combinedY)
+        .attr('r', d => sizeScale(d[sizeField]) + 20)
+
+      for (let i = 0; i < parsedData.length; i++) {
+        voronoiContainer
+          .append('path')
+          .attr('id', `v-${i}`)
+          .attr('d', voronoi.renderCell(i))
+          .attr('clip-path', () => `url(#clip-${i})`)
+          .on('mouseover', () => {
+            const selectCircle = select(`#c-${i}`)
+            const d = selectCircle.data()
+
+            fillAndShowTooltip({
+              shapeNode: selectCircle.node(),
+              dataObj: d[0],
+            })
+
+            selectCircle.classed('hovered', true)
+          })
+          .on('mouseout', () => {
+            tooltipDiv.style('display', 'none')
+            select(`#c-${i}`).classed('hovered', false)
+          })
+      }
+    }
+    createVoronoiCombined()
+
+    let runCount = 0
+    let combinedIntervalId = window.setInterval(() => {
+      if (runCount > 11) {
+        window.clearInterval(combinedIntervalId)
+        runCount = 0
+        return
+      }
+      preventOverflow({
+        allComponents,
+        svg,
+        margins: { marginLeft, marginRight, marginTop, marginBottom },
+      })
+      runCount++
+    }, 100)
+
+    allowSplit = true
+    manageSplitCombine()
   }
 
   const search = widgetsLeft
@@ -460,11 +677,12 @@ export function renderChart({
   function searchBy(term) {
     if (term) {
       select('.bubbles').classed('g-searching', true)
-      allBubbles.classed('c-match', d =>
-        d[nameField].toLowerCase().startsWith(term.toLowerCase()),
-      )
+      bubbles
+        .selectAll('circle')
+        .classed('c-match', d =>
+          d[nameField].toLowerCase().startsWith(term.toLowerCase()),
+        )
       if (chartCore.selectAll('.c-match').size() === 1) {
-        // tooltipDi
         const matchedCircle = chartCore.select('.c-match')
 
         fillAndShowTooltip({
@@ -527,101 +745,70 @@ export function renderChart({
     searchBy(e.target.value.trim())
   })
 
-  function splitSim() {
-    allowSplit = false
-    manageSplitCombine()
-    renderXAxisSplit()
-
-    yAxisSplit()
-
-    yAxisLabel.text(segmentTypeSplit)
-
-    svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightSplit}`)
-
-    bubbles.attr('transform', `translate(0, 0)`)
-    bubbles.raise()
-
-    forceSimulation(parsedData)
-      .force('charge', forceManyBody().strength(1))
-      .force(
-        'x',
-
-        forceX()
-          .x(function (d) {
-            return xScale(d[xField])
-          })
-          // split X strength
-          .strength(1),
-      )
-      .force(
-        'y',
-
-        forceY()
-          .y(function (d) {
-            return yScale(d[segmentField])
-          })
-          // split Y strength
-          .strength(1.2),
-      )
-      .force(
-        'collision',
-        forceCollide().radius(function (d) {
-          return sizeScale(d[sizeField]) + collisionDistance
-        }),
-      )
-      .on('tick', ticked)
-      .on('end', () => {
-        window.console.log('split force simulation ended')
-        allowCombine = true
-        manageSplitCombine()
-      })
-  }
-  function combinedSim() {
-    allowCombine = false
-    manageSplitCombine()
-    renderXAxisCombined()
-
-    yAxisCombined()
-
-    yAxisLabel.text(segmentTypeCombined)
-    svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightCombined}`)
-
-    bubbles.attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
-    bubbles.raise()
-
-    forceSimulation(parsedData)
-      .force('charge', forceManyBody().strength(1))
-      .force(
-        'x',
-
-        forceX()
-          .x(d => xScale(d[xField]))
-          // combine X strength
-          .strength(1),
-      )
-      .force(
-        'y',
-        forceY()
-          .y(0)
-          // combine Y strength
-          .strength(0.3),
-      )
-      .force(
-        'collision',
-        forceCollide().radius(function (d) {
-          return sizeScale(d[sizeField]) + collisionDistance
-        }),
-      )
-      .on('tick', ticked)
-      .on('end', () => {
-        window.console.log('combined force simulation ended')
-        allowSplit = true
-        manageSplitCombine()
-      })
-  }
-
   splitButton.on('click', splitSim)
   combinedButton.on('click', combinedSim)
 
+  // Voronoi visibility checkbox
+  const voronoiVisbilityForm = widgetsRight
+    .append('div')
+    .attr('class', 'text-xs')
+
+  voronoiVisbilityForm
+    .append('input')
+    .attr('id', 'show-voronoi')
+    .attr('type', 'checkbox')
+    .on('change', function (e) {
+      chartCore.classed('voronoi-visible', e.target.checked)
+    })
+
+  voronoiVisbilityForm
+    .append('label')
+    .text('Show interaction Voronoi')
+    .attr('for', 'show-voronoi')
+
   combinedSim()
+
+  const {
+    height: colorLegendContainerHeight,
+    width: colorLegendContainerWidth,
+    y: colorLegendContainerY,
+    x: colorLegendContainerX,
+  } = colorLegendContainerGroup.node().getBBox()
+
+  const {
+    height: sizeLegendHeight,
+    width: sizeLegendWidth,
+    y: sizeLegendY,
+    x: sizeLegendX,
+  } = sizeLegendContainerGroup.node().getBBox()
+
+  const {
+    x: chartCoreX,
+    width: chartCoreWidth,
+    y: chartCoreY,
+  } = chartCore.node().getBBox()
+
+  const legendHeight = max([sizeLegendHeight, colorLegendContainerHeight])
+
+  sizeLegendContainerGroup.attr(
+    'transform',
+    `translate(${
+      chartCoreX + chartCoreWidth - sizeLegendWidth - sizeLegendX
+    }, ${chartCoreY - legendHeight - sizeLegendY})`,
+  )
+
+  const sizeLegendAndColorLegendGap = 10
+
+  colorLegendContainerGroup.attr(
+    'transform',
+    `translate(${
+      chartCoreX +
+      chartCoreWidth -
+      sizeLegendWidth -
+      sizeLegendX -
+      colorLegendContainerWidth +
+      colorLegendContainerX -
+      sizeLegendAndColorLegendGap
+    }, ${chartCoreY - legendHeight - colorLegendContainerY})`,
+  )
 }

@@ -293,3 +293,79 @@ export function swatches({
 function entity(character) {
   return `&#${character.charCodeAt(0).toString()};`
 }
+
+export function colorLegendThreshold({
+  title,
+  color,
+  tickFormat,
+  tickSize = 6,
+  width,
+  height = 44 + tickSize,
+  marginTop = 18,
+  marginRight = 0,
+  marginBottom = 16 + tickSize,
+  marginLeft = 0,
+  tickValues,
+  ticks = width / 64,
+  removeTicks = false,
+  selection,
+}) {
+  let tickAdjust = g =>
+    g.selectAll('.tick line').attr('y1', marginTop + marginBottom - height)
+
+  const thresholds = color.thresholds
+    ? color.thresholds() // scaleQuantize
+    : color.quantiles
+    ? color.quantiles() // scaleQuantile
+    : color.domain() // scaleThreshold
+
+  const thresholdFormat =
+    tickFormat === undefined
+      ? d => d
+      : typeof tickFormat === 'string'
+      ? format(tickFormat)
+      : tickFormat
+
+  let x = scaleLinear()
+    .domain([-1, color.range().length - 1])
+    .rangeRound([marginLeft, width - marginRight])
+
+  selection
+    .append('g')
+    .selectAll('rect')
+    .data(color.range())
+    .join('rect')
+    .attr('x', (d, i) => x(i - 1))
+    .attr('y', marginTop)
+    .attr('width', (d, i) => x(i) - x(i - 1))
+    .attr('height', height - marginTop - marginBottom)
+    .attr('fill', d => d)
+
+  tickValues = range(thresholds.length)
+  tickFormat = i => thresholdFormat(thresholds[i], i)
+
+  selection
+    .append('g')
+    .attr('transform', `translate(0,${height - marginBottom})`)
+    .call(
+      axisBottom(x)
+        .ticks(ticks, typeof tickFormat === 'string' ? tickFormat : undefined)
+        .tickFormat(typeof tickFormat === 'function' ? tickFormat : undefined)
+        .tickSize(tickSize)
+        .tickValues(tickValues),
+    )
+    .call(tickAdjust)
+    .call(g => g.select('.domain').remove())
+    .call(g => (removeTicks ? g.selectAll('.tick').remove() : null))
+    .call(g =>
+      g
+        .append('text')
+        .attr('x', marginLeft)
+        .attr('y', marginTop + marginBottom - height - 6)
+        .attr('fill', 'currentColor')
+        .attr('text-anchor', 'start')
+        .attr('class', 'font-sans')
+        .attr('style', 'font-weight: 600;')
+        .text(title),
+    )
+}

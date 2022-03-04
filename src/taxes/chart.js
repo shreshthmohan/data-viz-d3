@@ -1,6 +1,5 @@
 import { tsv, schemePuOr, format } from 'd3'
 import { renderChart } from './render'
-import { processCorporateTaxData } from './processCorporateTaxData'
 
 const xAxisTickFormatter = val => {
   // if 65 na
@@ -29,8 +28,6 @@ const options = {
 
   // customColorScheme: ['red', 'blue', 'green', 'black', 'gray'],
   colorScheme: schemePuOr[6],
-
-  collisionDistance: 0.5,
 
   xDomainCustom: [0, 0.6],
   xAxisLabel: 'Effective tax rate (2007-2012)',
@@ -67,11 +64,9 @@ const dimensions = {
   nameField: 'company',
   segmentField: 'sector',
 }
-const dataPath = 'companies.tsv'
+const dataPath = 'simulationData.tsv'
 
-tsv(dataPath).then(rawData => {
-  const data = processCorporateTaxData(rawData)
-
+tsv(dataPath).then(data => {
   renderChart({
     chartContainerSelector: '#chart-container',
     data,

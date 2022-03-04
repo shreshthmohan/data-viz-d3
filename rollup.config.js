@@ -3,6 +3,28 @@ import { terser } from 'rollup-plugin-terser'
 
 export default [
   {
+    input: './src/taxes/chart.js',
+    output: [
+      {
+        file: './dist/taxes/chart.js',
+        format: 'umd',
+        name: 'taxes', // use this global var when using in the browser
+      },
+    ],
+    plugins: [resolve(), terser()],
+  },
+  {
+    input: './src/taxes-sim/chart.js',
+    output: [
+      {
+        file: './dist/taxes-sim/chart.js',
+        format: 'umd',
+        name: 'taxes-sim', // use this global var when using in the browser
+      },
+    ],
+    plugins: [resolve(), terser()],
+  },
+  {
     input: './src/sankey/chart.js',
     output: [
       {
@@ -24,17 +46,7 @@ export default [
     ],
     plugins: [resolve(), terser()],
   },
-  {
-    input: './src/taxes/chart.js',
-    output: [
-      {
-        file: './dist/taxes/chart.js',
-        format: 'umd',
-        name: 'taxes', // use this global var when using in the browser
-      },
-    ],
-    plugins: [resolve(), terser()],
-  },
+
   {
     input: './src/happiness/chart.js',
     output: [
