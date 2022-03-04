@@ -1,6 +1,5 @@
 import { tsv, schemePuOr, format } from 'd3'
 import { renderChart } from './render'
-// import { processCorporateTaxData } from './processCorporateTaxData'
 
 const xAxisTickFormatter = val => {
   // if 65 na
