@@ -683,9 +683,11 @@ export function renderChart({
   function searchBy(term) {
     if (term) {
       select('.bubbles').classed('g-searching', true)
-      allBubbles.classed('c-match', d =>
-        d[nameField].toLowerCase().startsWith(term.toLowerCase()),
-      )
+      bubbles
+        .selectAll('circle')
+        .classed('c-match', d =>
+          d[nameField].toLowerCase().startsWith(term.toLowerCase()),
+        )
       if (chartCore.selectAll('.c-match').size() === 1) {
         const matchedCircle = chartCore.select('.c-match')
 
