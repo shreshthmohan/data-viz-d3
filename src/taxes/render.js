@@ -93,14 +93,17 @@ export function renderChart({
     circle.c.hovered {
       stroke-opacity: 1;
     }
-    .show-voronoi {
+    #voronoi-container {
+      fill: transparent;
+      stroke: transparent;
+      transition: all 0.5s ease-in-out;
+    }
+    .voronoi-visible #voronoi-container {
       fill: #21291f4d;
       stroke: #eee8;
+      transition: all 0.5s ease-in-out;
     }
-    .hide-voronoi {
-      fill: none;
-      stroke: none;
-    }
+    
   `)
   const coreChartWidth = 700
 
@@ -438,9 +441,6 @@ export function renderChart({
 
     svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightSplit}`)
 
-    // bubbles.attr('transform', `translate(0, 0)`)
-    bubbles.raise()
-
     allBubbles = bubbles.selectAll('circle')
 
     if (allBubbles.empty()) {
@@ -562,8 +562,6 @@ export function renderChart({
     yAxisLabel.text(segmentTypeCombined)
     svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightCombined}`)
 
-    bubbles.raise()
-
     allBubbles = bubbles.selectAll('circle')
 
     if (allBubbles.empty()) {
@@ -581,7 +579,7 @@ export function renderChart({
             : xColorScale(d[xField])
         })
         .attr('cx', d => d.combinedX)
-        .attr('cy', d => parseFloat(d.combinedY) + coreChartHeightCombined / 2)
+        .attr('cy', d => d.combinedY)
         .attr('r', d => sizeScale(d[sizeField]))
     } else {
       // console.log('combined sim full')
@@ -589,7 +587,7 @@ export function renderChart({
         .transition()
         .duration(1000)
         .attr('cx', d => d.combinedX)
-        .attr('cy', d => parseFloat(d.combinedY) + coreChartHeightCombined / 2)
+        .attr('cy', d => d.combinedY)
     }
     chartCore.select('#voronoi-container').remove()
     preventOverflow({
@@ -602,7 +600,6 @@ export function renderChart({
         .append('g')
         .attr('id', 'voronoi-container')
         .style('pointer-events', 'all')
-        .attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
 
       const delaunay = Delaunay.from(
         parsedData,
@@ -616,9 +613,9 @@ export function renderChart({
       // The array arg passed here is the bounds for Voronoi
       const voronoi = delaunay.voronoi([
         -sizeScale.range()[1], // xMin
-        -coreChartHeightCombined / 2, // yMin
+        0, // yMin
         xScale(xMax) + sizeScale.range()[1], // xMax
-        coreChartHeightCombined / 2, // yMax
+        coreChartHeightCombined, // yMax
       ])
 
       voronoiContainer
@@ -638,8 +635,6 @@ export function renderChart({
           .append('path')
           .attr('id', `v-${i}`)
           .attr('d', voronoi.renderCell(i))
-          .attr('fill', '#21291f4d')
-          .attr('stroke', '#eee8')
           .attr('clip-path', () => `url(#clip-${i})`)
           .on('mouseover', () => {
             const selectCircle = select(`#c-${i}`)
@@ -757,6 +752,24 @@ export function renderChart({
 
   splitButton.on('click', splitSim)
   combinedButton.on('click', combinedSim)
+
+  // Voronoi visibility checkbox
+  const voronoiVisbilityForm = chartParent
+    .append('div')
+    .attr('class', 'text-xs')
+
+  voronoiVisbilityForm
+    .append('input')
+    .attr('id', 'show-voronoi')
+    .attr('type', 'checkbox')
+    .on('change', function (e) {
+      chartCore.classed('voronoi-visible', e.target.checked)
+    })
+
+  voronoiVisbilityForm
+    .append('label')
+    .text('Show interaction Voronoi')
+    .attr('for', 'show-voronoi')
 
   combinedSim()
 }

@@ -7,7 +7,6 @@ import {
   scaleQuantize,
   scalePoint,
   axisTop,
-  scaleBand,
   axisLeft,
   forceSimulation,
   forceManyBody,
@@ -218,7 +217,7 @@ export function renderChart({
     .range(sizeRangeXCompressed)
     .domain([0, maxSizeValue])
 
-  const yScale = scalePoint()
+  const yScaleSplit = scalePoint()
     .domain(segments)
     .range([0, coreChartHeightSplit])
     .padding(0.5)
@@ -373,7 +372,7 @@ export function renderChart({
       .append('g')
       .attr('id', 'y-axis-split')
       .style('pointer-events', 'none')
-      .call(axisLeft(yScale).tickSize(-coreChartWidth))
+      .call(axisLeft(yScaleSplit).tickSize(-coreChartWidth))
       .call(g => g.select('.domain').remove())
       .call(g => {
         g.selectAll('.tick line').attr('stroke-opacity', 0.1)
@@ -387,7 +386,7 @@ export function renderChart({
       .attr('opacity', 1)
   }
 
-  const yScaleCombined = scaleBand()
+  const yScaleCombined = scalePoint()
     .domain([combinedSegmentLabel])
     .range([0, coreChartHeightCombined])
 
@@ -538,7 +537,6 @@ export function renderChart({
 
     svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightSplit}`)
 
-    bubbles.attr('transform', `translate(0, 0)`)
     bubbles.raise()
 
     forceSimulation(parsedData)
@@ -558,7 +556,7 @@ export function renderChart({
 
         forceY()
           .y(function (d) {
-            return yScale(d[segmentField])
+            return yScaleSplit(d[segmentField])
           })
           // split Y strength
           .strength(1.2),
@@ -571,6 +569,7 @@ export function renderChart({
       )
       .on('tick', ticked)
       .on('end', () => {
+        // console.log(bubbles.selectAll('circle').data())
         window.console.log('split force simulation ended')
         allowCombine = true
         manageSplitCombine()
@@ -586,7 +585,6 @@ export function renderChart({
     yAxisLabel.text(segmentTypeCombined)
     svg.attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightCombined}`)
 
-    bubbles.attr('transform', `translate(0, ${coreChartHeightCombined / 2})`)
     bubbles.raise()
 
     forceSimulation(parsedData)
@@ -602,7 +600,7 @@ export function renderChart({
       .force(
         'y',
         forceY()
-          .y(0)
+          .y(yScaleCombined(combinedSegmentLabel))
           // combine Y strength
           .strength(0.3),
       )
@@ -614,6 +612,7 @@ export function renderChart({
       )
       .on('tick', ticked)
       .on('end', () => {
+        // console.log(bubbles.selectAll('circle').data())
         window.console.log('combined force simulation ended')
         allowSplit = true
         manageSplitCombine()
