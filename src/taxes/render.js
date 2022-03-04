@@ -235,6 +235,10 @@ export function renderChart({
   const xDomain = xDomainCustom || xDomainDefault
   const xScale = scaleLinear().domain(xDomain).range([0, coreChartWidth])
 
+  const xRange = extent([...xScale.domain(), ...additionalXAxisTickValues])
+  const xMax = xRange[1]
+  console.log({ xMax, xv: xScale(xMax) })
+
   // TODO: separate field for color scale and xscale?
   // Right now both x scale and color scale are based on the same
   const xColorScale = scaleQuantize()
@@ -364,7 +368,7 @@ export function renderChart({
     .append('g')
     .attr('transform', `translate(${-23}, ${-20})`)
     .append('text')
-    .attr('class', 'text-xs font-semibold ')
+    .attr('class', 'text-xs')
     .text(segmentType)
     .attr('text-anchor', 'end')
 
@@ -374,13 +378,13 @@ export function renderChart({
       .append('g')
       .attr('id', 'y-axis-split')
       .style('pointer-events', 'none')
-      .call(axisLeft(yScale).tickSize(-coreChartWidth))
+      .call(axisLeft(yScale).tickSize(-xScale(xMax)))
       .call(g => g.select('.domain').remove())
       .call(g => {
         g.selectAll('.tick line').attr('stroke-opacity', 0.1)
         g.selectAll('.tick text')
           .attr('transform', 'translate(-20,0)')
-          .classed('text-xs font-bold', true)
+          .classed('text-xs', true)
       })
       .attr('opacity', 0)
       .transition()
@@ -398,7 +402,8 @@ export function renderChart({
       .append('g')
       .attr('id', 'y-axis-combined')
       .style('pointer-events', 'none')
-      .call(axisLeft(yScaleCombined).tickSize(-coreChartWidth))
+      // added xScale(xMax) to accomodate extra ticks (N/A tax rate in this case)
+      .call(axisLeft(yScaleCombined).tickSize(-xScale(xMax)))
       .call(g => g.select('.domain').remove())
       .call(g => {
         g.selectAll('.tick line').attr('stroke-opacity', 0.1)
@@ -479,9 +484,6 @@ export function renderChart({
         d => d.splitY,
       )
 
-      const xRange = extent([...xScale.range(), ...additionalXAxisTickValues])
-      const xMax = xRange[1]
-
       // The array arg passed here is the bounds for Voronoi
       const voronoi = delaunay.voronoi([
         -sizeScale.range()[1], // xMin
@@ -528,7 +530,7 @@ export function renderChart({
 
     let runCount = 0
     let splitIntervalId = window.setInterval(() => {
-      if (runCount > 7) {
+      if (runCount > 11) {
         createVoronoiSplit()
         window.clearInterval(splitIntervalId)
         runCount = 0
@@ -602,9 +604,6 @@ export function renderChart({
         d => d.combinedY,
       )
 
-      const xRange = extent([...xScale.range(), ...additionalXAxisTickValues])
-      const xMax = xRange[1]
-
       // The array arg passed here is the bounds for Voronoi
       const voronoi = delaunay.voronoi([
         -sizeScale.range()[1], // xMin
@@ -651,7 +650,7 @@ export function renderChart({
 
     let runCount = 0
     let combinedIntervalId = window.setInterval(() => {
-      if (runCount > 7) {
+      if (runCount > 11) {
         createVoronoiCombined()
         window.clearInterval(combinedIntervalId)
         runCount = 0
