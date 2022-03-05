@@ -14,6 +14,7 @@ import {
 import { uniqBy, uniq } from 'lodash-es'
 import { preventOverflow } from '../utils/preventOverflow'
 import { colorLegend } from '../utils/colorLegend'
+import { setupSvgToPngDownloadButton } from '../utils/svgToPngDownload'
 
 export function renderChart({
   data,
@@ -75,17 +76,29 @@ export function renderChart({
   `)
 
   const coreChartWidth = 1000
-  const { svg, coreChartHeight, allComponents, chartCore, widgetsRight } =
-    setupChartArea({
-      chartContainerSelector,
-      coreChartWidth,
-      aspectRatio,
-      marginTop,
-      marginBottom,
-      marginLeft,
-      marginRight,
-      bgColor,
-    })
+  const {
+    svg,
+    coreChartHeight,
+    allComponents,
+    chartCore,
+    widgetsRight,
+    widgetsLeft,
+  } = setupChartArea({
+    chartContainerSelector,
+    coreChartWidth,
+    aspectRatio,
+    marginTop,
+    marginBottom,
+    marginLeft,
+    marginRight,
+    bgColor,
+  })
+
+  setupSvgToPngDownloadButton({
+    filename: 'calendar.png',
+    svgNode: svg.node(),
+    buttonParentSelection: widgetsLeft,
+  })
 
   const tooltipDiv = initializeTooltip()
 
@@ -157,6 +170,8 @@ export function renderChart({
     svg,
     margins: { marginLeft, marginRight, marginTop, marginBottom },
   })
+
+  // {buttonText, filename, svgNode, buttonParentSelection}
 }
 
 function setupChartArea({
