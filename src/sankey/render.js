@@ -12,6 +12,7 @@ import {
 import { setupChartArea } from '../utils/setupChartArea'
 import { initializeTooltip } from '../utils/initializeTooltip'
 import { preventOverflow } from '../utils/preventOverflow'
+import { setupSvgToPngDownloadButton } from '../utils/svgToPngDownload'
 
 const alignOptions = {
   justify: sankeyJustify,
@@ -80,6 +81,12 @@ export function renderChart({
       marginRight,
       bgColor,
     })
+
+  setupSvgToPngDownloadButton({
+    filename: 'sankey.png',
+    svgNode: svg.node(),
+    buttonParentSelection: select(chartContainerSelector),
+  })
 
   const tooltipDiv = initializeTooltip()
 

@@ -20,6 +20,7 @@ import {
 import { preventOverflowThrottled } from '../utils/preventOverflow'
 import { colorLegendThreshold } from '../utils/colorLegend'
 import { formatNumber } from '../utils/formatters'
+import { setupSvgToPngDownloadButton } from '../utils/svgToPngDownload'
 
 export function renderChart({
   data,
@@ -133,6 +134,12 @@ export function renderChart({
     .append('svg')
     .attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightCombined}`)
     .style('background', bgColor)
+
+  setupSvgToPngDownloadButton({
+    filename: 'taxes.png',
+    svgNode: svg.node(),
+    buttonParentSelection: select(chartContainerSelector),
+  })
 
   const allComponents = svg.append('g').attr('class', 'all-components')
 

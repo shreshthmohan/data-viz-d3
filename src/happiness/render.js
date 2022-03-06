@@ -19,6 +19,7 @@ import { renderDirectionLegend } from './directionLegend'
 import { preventOverflow } from '../utils/preventOverflow'
 import { toClassText } from '../utils/toClassText'
 import { pointsToRotationAngle, maceShape } from './helpers'
+import { setupSvgToPngDownloadButton } from '../utils/svgToPngDownload'
 
 export function renderChart({
   data,
@@ -102,6 +103,12 @@ export function renderChart({
     marginLeft,
     marginRight,
     bgColor,
+  })
+
+  setupSvgToPngDownloadButton({
+    filename: 'happiness-economics.png',
+    svgNode: svg.node(),
+    buttonParentSelection: select(chartContainerSelector),
   })
 
   const tooltipDiv = initializeTooltip()
@@ -433,18 +440,15 @@ function setupChartArea({
     )
   const widgetsLeft = widgets
     .append('div')
-    .attr(
-      'style',
-      'display: flex; flex-direction: column; align-items: start; gap: 10px;',
-    )
+    .attr('style', 'display: flex; align-items: center; gap: 10px;')
   const widgetsRight = widgets
     .append('div')
-    .attr('style', 'display: flex; align-items: start; column-gap: 10px;')
+    .attr('style', 'display: flex; align-items: center; column-gap: 10px;')
 
   const svg = chartParent
     .append('svg')
     .attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeight}`)
-    .style('background', bgColor)
+    .style('background-color', bgColor)
 
   const allComponents = svg.append('g').attr('class', 'all-components')
 
@@ -573,7 +577,7 @@ function renderSizeLegend({
 
   const sizeLegendContainerGroup = parentSelection
     .append('g')
-    .attr('transform', 'translate(0, 10)')
+    .attr('transform', 'translate(10, 10)')
 
   sizeLegendContainerGroup
     .append('g')

@@ -21,6 +21,7 @@ export function setupSvgToPngDownloadButton({
       .append('canvas')
       .attr('width', width)
       .attr('height', height)
+      .style('display', 'none')
       .node()
     const ctx = canvas.getContext('2d')
     const svgo = svgNode.outerHTML
@@ -33,5 +34,7 @@ export function setupSvgToPngDownloadButton({
     link.download = filename
     link.href = canvas.toDataURL('image/png')
     link.click()
+
+    select('canvas').remove()
   }
 }
