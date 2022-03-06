@@ -17,6 +17,7 @@ import {
 import { preventOverflow } from '../utils/preventOverflow'
 import { colorLegendThreshold } from '../utils/colorLegend'
 import { formatNumber } from '../utils/formatters'
+import { setupSvgToPngDownloadButton } from '../utils/svgToPngDownload'
 
 export function renderChart({
   data,
@@ -91,21 +92,18 @@ export function renderChart({
     }
     circle.c {
       stroke-width: 1;
-      stroke: #000;
       stroke-opacity: 0.5;
     }
     circle.c.hovered {
       stroke-opacity: 1;
+      stroke-width: 2;
     }
     #voronoi-container {
-      fill: transparent;
-      stroke: transparent;
+      visibility: hidden;
     }
     .voronoi-visible #voronoi-container {
-      fill: #21291f20;
-      stroke: #7774;
+      visibility: unset;
     }
-    
   `)
   const coreChartWidth = 700
 
@@ -143,6 +141,12 @@ export function renderChart({
     .append('svg')
     .attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeightCombined}`)
     .style('background', bgColor)
+
+  setupSvgToPngDownloadButton({
+    filename: 'taxes.png',
+    svgNode: svg.node(),
+    buttonParentSelection: select(chartContainerSelector),
+  })
 
   const allComponents = svg.append('g').attr('class', 'all-components')
 
@@ -449,6 +453,7 @@ export function renderChart({
             ? xOutsideDomainColor
             : xColorScale(d[xField])
         })
+        .attr('stroke', 'black')
         .attr('cx', d => d.splitX)
         .attr('cy', d => d.splitY)
         .attr('r', 0)
@@ -476,6 +481,8 @@ export function renderChart({
         .append('g')
         .attr('id', 'voronoi-container')
         .style('pointer-events', 'all')
+        .attr('fill', '#21291f20')
+        .attr('stroke', '#7774')
 
       const delaunay = Delaunay.from(
         parsedData,
@@ -574,6 +581,7 @@ export function renderChart({
             ? xOutsideDomainColor
             : xColorScale(d[xField])
         })
+        .attr('stroke', 'black')
         .attr('cx', d => d.combinedX)
         .attr('cy', d => d.combinedY)
         .attr('r', d => sizeScale(d[sizeField]))
@@ -596,6 +604,8 @@ export function renderChart({
         .append('g')
         .attr('id', 'voronoi-container')
         .style('pointer-events', 'all')
+        .attr('fill', '#21291f20')
+        .attr('stroke', '#7774')
 
       const delaunay = Delaunay.from(
         parsedData,

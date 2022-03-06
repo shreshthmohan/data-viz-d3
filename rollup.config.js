@@ -23,7 +23,7 @@ export default [
         name: 'taxes', // use this global var when using in the browser
       },
     ],
-    plugins: [resolve(), terser()],
+    plugins: [resolve(), commonjs(), terser()],
   },
   {
     input: './src/taxes-sim/chart.js',
