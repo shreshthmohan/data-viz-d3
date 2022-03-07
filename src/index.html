@@ -8,65 +8,128 @@
     <title>A set of data visualisations made with d3.js</title>
     <link rel="shortcut icon" href="./favicon.ico" />
   </head>
-  <body>
-    <main class="md:pt-10 max-w-prose m-auto">
-      <h1 class="text-3xl font-bold">
-        A collection of charts created in d3.js v7
-      </h1>
-      <h2 class="text-2xl">Charts</h2>
-      <ol class="leading-relaxed">
-        <li><a href="./fan">Change in airfares - Japanese Fan</a></li>
-        <li>
-          Variation in corporate taxes - Horizontal packed bubble with split
-          <ol>
-            <li>
-              <a href="./taxes">Simulation result</a>
-            </li>
-            <li>
-              <a href="./taxes-sim">Force simulation</a>
-            </li>
-          </ol>
-        </li>
+  <body class="font-serif">
+    <main class="md:py-20 max-w-[900px] m-auto">
+      <div
+        class="p-6 border border-solid border-gray-400 rounded flex flex-col justify-between overflow-hidden shadow-lg"
+      >
+        <div class="w-full">
+          <h2 class="m-0 font-serif font-normal">
+            A set of interactive data visualisations
+          </h2>
+          <p class="leading-tight font-serif text-gray-500">
+            Recreated a few older charts in the latest version of d3.js. Some of
+            these are also interactive versions of existing static charts.
+          </p>
+        </div>
+        <div class="mb-4 border-gray-200 border-solid border-0 border-t"></div>
 
-        <li>
-          <a href="./happiness"
-            >Happiness Economics - Bubble with custom shape</a
-          >
-        </li>
-        <li>
-          <a href="./calendar"
-            >US Drought History - Stacked bar charts arranged in a calendar
-            grid</a
-          >
-        </li>
-        <li>
-          <a href="./sankey"
-            >UK Energy Production, Conversion and Consumption 2050 - Sankey with
-            recursive search
+        <div
+          class="shadow-sm rounded p-3 border border-solid border-gray-300 mb-4"
+        >
+          <h3 class="m-0 font-normal">Horizontal packed bubble</h3>
+          <p class="mt-1 text-gray-500">
+            A force simulation with two modes, combined and split. Also uses
+            Voronoi to implement a layer to improve interaction.
+          </p>
+          <a href="./taxes/" class="">
+            <div
+              class="overflow-hidden max-h-[200px] rounded border border-solid border-transparent hover:brightness-75"
+            >
+              <img
+                class="w-full"
+                src="./images/taxes.webp"
+                alt="horizontal bubble chart with voronoi pattern"
+              />
+            </div>
           </a>
-        </li>
-      </ol>
-      <h2 class="text-2xl">Notes</h2>
-      <ul>
-        <li>
-          Who's building these:
-          <a
-            href="https://twitter.com/shreshthmohan"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Shreshth Mohan</a
-          >
-        </li>
-        <li>
-          Source code on
-          <a
-            href="https://github.com/shreshthmohan/data-viz-d3"
-            target="_blank"
-            rel="noopener noreferrer"
-            >GitHub</a
-          >
-        </li>
-      </ul>
+        </div>
+
+        <div
+          class="shadow-sm rounded p-3 border border-solid border-gray-300 mb-4"
+        >
+          <h3 class="m-0 font-normal">Calendar</h3>
+          <p class="mt-1 text-gray-500">
+            A calendar-like grid of stacked bar charts with a legend that allows
+            for toggling of different parts of the stack.
+          </p>
+          <a href="./calendar/" class="">
+            <div
+              class="overflow-hidden max-h-[200px] rounded border border-solid border-transparent hover:brightness-75"
+            >
+              <img
+                class="w-full"
+                src="./images/calendar.webp"
+                alt="horizontal bubble chart with voronoi pattern"
+              />
+            </div>
+          </a>
+        </div>
+
+        <div
+          class="shadow-sm rounded p-3 border border-solid border-gray-300 mb-4"
+        >
+          <h3 class="m-0 font-normal">Mace</h3>
+          <p class="mt-1 text-gray-500">
+            A bubble chart with an additional direction dimension denoted by the
+            orientation of a custom shape made specifically for this chart.
+          </p>
+          <a href="./happiness/" class="">
+            <div
+              class="bg-white overflow-hidden max-h-[200px] rounded border border-solid border-transparent hover:brightness-75"
+            >
+              <img class="w-full" src="./images/happiness.webp" alt="" />
+            </div>
+          </a>
+        </div>
+
+        <div
+          class="shadow-sm rounded p-3 border border-solid border-gray-300 mb-4"
+        >
+          <h3 class="m-0 font-normal">Sankey</h3>
+          <p class="mt-1 text-gray-500">
+            A sankey chart with recursive search to highlight all the nodes and
+            links connected to the currently selected node.
+          </p>
+          <a href="./sankey/" class="">
+            <div
+              class="bg-white overflow-hidden max-h-[200px] rounded border border-solid border-transparent hover:brightness-75"
+            >
+              <img class="w-full" src="./images/sankey.webp" alt="" />
+            </div>
+          </a>
+        </div>
+
+        <div
+          class="shadow-sm rounded p-3 border border-solid border-gray-300 mb-4"
+        >
+          <h3 class="m-0 font-normal">Japanese Fan</h3>
+          <p class="mt-1 text-gray-500">
+            A radial chart that vaguely looks like an open Japanese fan
+          </p>
+          <a href="./fan/" class="">
+            <div
+              class="bg-white overflow-hidden max-h-[200px] rounded border border-solid border-transparent hover:brightness-75"
+            >
+              <img class="" src="./images/fan.webp" alt="" />
+            </div>
+          </a>
+        </div>
+
+        <div class="shadow-sm rounded p-3 border border-solid border-gray-300">
+          <h3 class="m-0 font-normal">More in the works</h3>
+          <p class="mt-1 text-gray-500 mb-0">
+            I will continue to add new charts. If you want to talk about a
+            specific chart (even if it's not here) or nudge me to build a new
+            one, DM me on
+            <a href="https://twitter.com/shreshthmohan">Twitter</a> or create an
+            issue on
+            <a href="https://github.com/shreshthmohan/data-viz-d3/issues"
+              >GitHub</a
+            >.
+          </p>
+        </div>
+      </div>
     </main>
   </body>
 </html>
