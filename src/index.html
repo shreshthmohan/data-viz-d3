@@ -9,7 +9,7 @@
     <link rel="shortcut icon" href="./favicon.ico" />
   </head>
   <body class="font-serif">
-    <main class="md:pt-10 max-w-[900px] m-auto">
+    <main class="md:py-20 max-w-[900px] m-auto">
       <div
         class="p-6 border border-solid border-gray-400 rounded flex flex-col justify-between overflow-hidden shadow-lg"
       >
@@ -58,10 +58,44 @@
               class="overflow-hidden max-h-[200px] rounded border border-solid border-transparent hover:brightness-75"
             >
               <img
-                class=""
+                class="w-full"
                 src="./images/calendar.webp"
                 alt="horizontal bubble chart with voronoi pattern"
               />
+            </div>
+          </a>
+        </div>
+
+        <div
+          class="shadow-sm rounded p-3 border border-solid border-gray-300 mb-4"
+        >
+          <h3 class="m-0 font-normal">Mace</h3>
+          <p class="mt-1 text-gray-500">
+            A bubble chart with an additional direction dimension denoted by the
+            orientation of a custom shape made specifically for this chart.
+          </p>
+          <a href="./happiness/" class="">
+            <div
+              class="bg-white overflow-hidden max-h-[200px] rounded border border-solid border-transparent hover:brightness-75"
+            >
+              <img class="w-full" src="./images/happiness.webp" alt="" />
+            </div>
+          </a>
+        </div>
+
+        <div
+          class="shadow-sm rounded p-3 border border-solid border-gray-300 mb-4"
+        >
+          <h3 class="m-0 font-normal">Sankey</h3>
+          <p class="mt-1 text-gray-500">
+            A sankey chart with recursive search to highlight all the nodes and
+            links connected to the currently selected node.
+          </p>
+          <a href="./sankey/" class="">
+            <div
+              class="bg-white overflow-hidden max-h-[200px] rounded border border-solid border-transparent hover:brightness-75"
+            >
+              <img class="w-full" src="./images/sankey.webp" alt="" />
             </div>
           </a>
         </div>
@@ -77,13 +111,23 @@
             <div
               class="bg-white overflow-hidden max-h-[200px] rounded border border-solid border-transparent hover:brightness-75"
             >
-              <img
-                class=""
-                src="./images/fan.webp"
-                alt="horizontal bubble chart with voronoi pattern"
-              />
+              <img class="" src="./images/fan.webp" alt="" />
             </div>
           </a>
+        </div>
+
+        <div class="shadow-sm rounded p-3 border border-solid border-gray-300">
+          <h3 class="m-0 font-normal">More in the works</h3>
+          <p class="mt-1 text-gray-500 mb-0">
+            I will continue to add new charts. If you want to talk about a
+            specific chart (even if it's not here) or nudge me to build a new
+            one, DM me on
+            <a href="https://twitter.com/shreshthmohan">Twitter</a> or create an
+            issue on
+            <a href="https://github.com/shreshthmohan/data-viz-d3/issues"
+              >GitHub</a
+            >.
+          </p>
         </div>
       </div>
     </main>
