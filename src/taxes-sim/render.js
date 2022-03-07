@@ -429,6 +429,7 @@ export function renderChart({
           ? xOutsideDomainColor
           : xColorScale(d[xField])
       })
+      .attr('stroke', '#777')
       .merge(u)
       .attr('cx', function (d) {
         return d.x
