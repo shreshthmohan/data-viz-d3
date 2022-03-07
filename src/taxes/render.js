@@ -96,13 +96,18 @@ export function renderChart({
     }
     circle.c.hovered {
       stroke-opacity: 1;
-      stroke-width: 2;
+      stroke-width: 1;
     }
-    #voronoi-container {
+    /* mouse events won't trigger if visibility is set on the parent
+       it has to be set on the actual element being hovered for the event to be triggered
+    */
+    #voronoi-container path {
       visibility: hidden;
+      pointer-events: all;
     }
-    .voronoi-visible #voronoi-container {
-      visibility: unset;
+    .voronoi-visible #voronoi-container path {
+      visibility: visible;
+      pointer-events: all;
     }
   `)
   const coreChartWidth = 700
