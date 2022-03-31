@@ -16,6 +16,7 @@ import {
 } from 'd3'
 
 import { preventOverflow } from '../utils/preventOverflow'
+import { setupSvgToPngDownloadButton } from '../utils/svgToPngDownload'
 
 const radiusField = 'Distance'
 const angleField = 'Price change'
@@ -77,6 +78,14 @@ csv('data.csv').then(rawData => {
     .append('svg')
     .attr('viewBox', `0 0 ${viewBoxWidth} ${viewBoxHeight}`)
     .style('background', bgColor)
+    .attr('xmlns', 'http://www.w3.org/2000/svg')
+    .attr('xmlns:xlink', 'http://www.w3.org/1999/xlink')
+
+  setupSvgToPngDownloadButton({
+    filename: 'japanese-fan.png',
+    svgNode: svg.node(),
+    buttonParentSelection: chartParent,
+  })
 
   const allComponents = svg.append('g').attr('class', 'all-components')
 

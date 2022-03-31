@@ -1,7 +1,19 @@
 import resolve from '@rollup/plugin-node-resolve'
 import { terser } from 'rollup-plugin-terser'
+import commonjs from '@rollup/plugin-commonjs'
 
 export default [
+  {
+    input: './src/calendar/chart.js',
+    output: [
+      {
+        file: './dist/calendar/chart.js',
+        format: 'umd',
+        name: 'calendar', // use this global var when using in the browser
+      },
+    ],
+    plugins: [resolve(), commonjs(), terser()],
+  },
   {
     input: './src/taxes/chart.js',
     output: [
@@ -11,7 +23,7 @@ export default [
         name: 'taxes', // use this global var when using in the browser
       },
     ],
-    plugins: [resolve(), terser()],
+    plugins: [resolve(), commonjs(), terser()],
   },
   {
     input: './src/taxes-sim/chart.js',
@@ -22,7 +34,7 @@ export default [
         name: 'taxes-sim', // use this global var when using in the browser
       },
     ],
-    plugins: [resolve(), terser()],
+    plugins: [resolve(), commonjs(), terser()],
   },
   {
     input: './src/sankey/chart.js',
@@ -33,7 +45,7 @@ export default [
         name: 'sankey', // use this global var when using in the browser
       },
     ],
-    plugins: [resolve(), terser()],
+    plugins: [resolve(), commonjs(), terser()],
   },
   {
     input: './src/fan/chart.js',
@@ -44,7 +56,7 @@ export default [
         name: 'fan', // use this global var when using in the browser
       },
     ],
-    plugins: [resolve(), terser()],
+    plugins: [resolve(), commonjs(), terser()],
   },
   {
     input: './src/happiness/chart.js',
@@ -55,17 +67,6 @@ export default [
         name: 'happiness', // use this global var when using in the browser
       },
     ],
-    plugins: [resolve(), terser()],
-  },
-  {
-    input: './src/calendar/chart.js',
-    output: [
-      {
-        file: './dist/calendar/chart.js',
-        format: 'umd',
-        name: 'calendar', // use this global var when using in the browser
-      },
-    ],
-    plugins: [resolve(), terser()],
+    plugins: [resolve(), commonjs(), terser()],
   },
 ]
