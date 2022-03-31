@@ -58,7 +58,6 @@ export default [
     ],
     plugins: [resolve(), commonjs(), terser()],
   },
-
   {
     input: './src/happiness/chart.js',
     output: [

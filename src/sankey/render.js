@@ -1,4 +1,8 @@
 /* global window */
+
+// Chart based on https://observablehq.com/@d3/sankey by Mike Bostock
+// Search algo used is based on https://observablehq.com/@iashishsingh/sankey-diagram-path-highlighting
+
 import { select, scaleOrdinal, schemeCategory10, format } from 'd3'
 import { uniq } from 'lodash-es'
 import {
